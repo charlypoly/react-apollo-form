@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "lib": [
+            "es6"
+        ],
+        "declaration": true,
+        "outDir": "./dist",
+        "rootDir": "."
+    }
+}

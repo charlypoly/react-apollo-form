@@ -1,0 +1,24 @@
+{
+  "name": "react-apollo-form",
+  "version": "0.0.1",
+  "main": "build/index.js",
+  "bin": "build/lib/cli.js",
+  "repository": "git@github.com:wittydeveloper/react-apollo-form.git",
+  "author": "Charly POLY <cpoly55@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-client": "^2.3.1",
+    "apollo-codegen": "^0.19.1",
+    "json-schema": "^0.2.3",
+    "react-apollo": "^2.1.4",
+    "react-jsonschema-form": "^1.0.3",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/apollo-codegen": "^0.16.0",
+    "@types/json-schema": "^6.0.1",
+    "@types/node": "^10.1.2",
+    "@types/react-jsonschema-form": "^1.0.4",
+    "@types/yargs": "^11.0.0"
+  }
+}
