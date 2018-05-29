@@ -1,14 +1,10 @@
 // tslint:disable:no-console
 // tslint:disable:no-any
 import * as definitions from '../JSON-schema.json';
-import { FormDefinitionsSchema } from '../JSON-schema';
 import { reduce, omit, pick } from 'lodash';
 
-const _def = (definitions as FormDefinitionsSchema).definitions;
-export const _queries = _def.Query.properties;
 export const _mutations = _def.Mutation.properties;
-
-export type MutationTypes = keyof typeof _mutations;
+export type MutationTypes = ApolloFormMutationNames;
 
 export const getFormDefinitions = () => _def;
 

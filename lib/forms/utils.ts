@@ -1,5 +1,5 @@
 // tslint:disable:no-any
-import { get, transform, unset, merge, map, set, has, isPlainObject, last, take, cloneDeep } from 'lodash';
+import { get, transform, unset, merge, map, set, has, isPlainObject, last, take, cloneDeep, uniq } from 'lodash';
 import { AlineFormBuilder, MutationTypes } from './definitions';
 import { DocumentNode } from 'graphql';
 import { JSONSchema6 } from 'json-schema';
@@ -9,6 +9,7 @@ import { RefetchQueriesProviderFn } from 'react-apollo';
 
 // AlineForm options object is composed of 2 modes : "mutation" or "manual"
 export type AlineFormConfigBase = {
+    name?: string;
     // ability to ignore specific fields, eg: ["user.id"]
     ignoreFields?: string[];
     // ability to set specific fields to required, eg: ["user.email"]
@@ -19,23 +20,22 @@ export type AlineFormConfigBase = {
     augment?: object;
 };
 
-export type AlineFormConfigMutation = {
+export interface AlineFormConfigMutation extends AlineFormConfigBase {
     mutation: {
         name: MutationTypes;
         document: DocumentNode;
         variables?: object;
         context?: object;
         refetchQueries?: string[] | PureQueryOptions[] | RefetchQueriesProviderFn;
-    },
-};
+    };
+}
 
-export type AlineFormConfigManual = {
+export interface AlineFormConfigManual extends AlineFormConfigBase {
     schema: object;
-    name: string;
     saveData: (formData: any) => any;
-};
+}
 
-export type AlineFormConfig = AlineFormConfigBase & (AlineFormConfigMutation | AlineFormConfigManual);
+export type AlineFormConfig = AlineFormConfigManual | AlineFormConfigMutation;
 
 // type guard
 export const isMutationConfig = (config: AlineFormConfig): config is AlineFormConfigMutation => {
@@ -98,10 +98,11 @@ export const getSchemaFromConfig = (config: AlineFormConfig, title?: string): JS
             const prop = last(parts);
             const parentsPaths = take(parts, parts.length - 1);
             const name = parentsPaths.join('.').replace(/\./g, '.properties.');
+            const newRequired = uniq([...get(flattenSchema.properties, `${name}.required`), prop]);
             set(
                 flattenSchema.properties,
-                name,
-                merge(get(flattenSchema.properties, name), { required: [prop] })
+                `${name}.required`,
+                newRequired
             );
         });
     }

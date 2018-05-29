@@ -1,27 +1,20 @@
-// tslint:disable:no-any
 import * as React from 'react';
-import Form, {
-    ArrayFieldTemplateProps,
+import { ReactJsonschemaFormError, AlineFormConfig, getSchemaFromConfig, isMutationConfig, cleanData, transformErrors } from "./utils";
+import {
     UiSchema,
     FieldTemplateProps,
+    ArrayFieldTemplateProps,
     ObjectFieldTemplateProps,
     IChangeEvent
-} from 'react-jsonschema-form';
-import {
-    AlineFormConfig,
-    AlineFormConfigMutation,
-    transformErrors,
-    isMutationConfig,
-    cleanData,
-    ReactJsonschemaFormError,
-    getSchemaFromConfig
-} from './utils';
-import { titleRenderer, buttonsRenderer, FormRenderer, saveButtonRenderer, cancelButtonRenderer } from './renderers';
+} from "react-jsonschema-form";
 import { JSONSchema6 } from 'json-schema';
-import { ApolloProvider } from 'react-apollo';
-import { ApolloClient } from 'apollo-client';
+import { titleRenderer } from './renderers';
+import { buttonsRenderer } from './renderers';
+import { saveButtonRenderer } from './renderers';
+import { cancelButtonRenderer } from './renderers';
+import { FormRenderer } from './renderers';
 
-type ErrorListComponent = React.SFC<{
+export type ErrorListComponent = React.SFC<{
     errors: ReactJsonschemaFormError[];
     errorSchema: object;
     schema: object;
@@ -31,7 +24,8 @@ type ErrorListComponent = React.SFC<{
 
 // Augment SchemaUi for AlineForm ui prop
 export type AlineFormUi = {
-    showErrorList?: boolean;
+    showErrorsList?: boolean;
+    showErrorsInline?: boolean;
     errorListComponent?: ErrorListComponent;
     templates?: {
         FieldTemplate?: React.StatelessComponent<FieldTemplateProps>;
@@ -40,7 +34,7 @@ export type AlineFormUi = {
     }
 };
 
-type AlineFormProps = {
+export type AlineFormProps = {
     data: any;
     title?: string;
     subTitle?: string;
@@ -49,9 +43,10 @@ type AlineFormProps = {
     onCancel?: () => void;
     ui?: UiSchema & AlineFormUi;
     children?: React.SFC<AlineRenderProps>;
+    liveValidate?: boolean;
 };
 
-interface AlineFormState {
+export interface AlineFormState {
     isDirty: boolean;
     isSaved: boolean;
     hasError: boolean;
@@ -59,7 +54,7 @@ interface AlineFormState {
     data: any;
 }
 
-interface AlineRenderProps {
+export interface AlineRenderProps {
     // renderers
     header: () => React.ReactNode;
     form: () => React.ReactNode;
@@ -76,11 +71,25 @@ interface AlineRenderProps {
     data: any;
 }
 
+// Aline custom widgets
+const widgets: { [k: string]: any } = {};
+const fields: { [k: string]: any } = {};
+
+export const register = (type: 'widget' | 'field', name: string, component: any) => {
+    // tslint:disable-next-line:switch-default
+    switch (type) {
+        case 'field':
+            fields[name] = component;
+            break;
+        case 'widget':
+            widgets[name] = component;
+            break;
+    }
+};
 
 export class AlineForm extends React.Component<AlineFormProps, AlineFormState> {
 
     submitBtn!: HTMLInputElement | null;
-    apolloClient!: ApolloClient<{}>;
 
     state: AlineFormState = {
         isDirty: false,
@@ -123,7 +132,7 @@ export class AlineForm extends React.Component<AlineFormProps, AlineFormState> {
         if (isMutationConfig(config)) {
             const { mutation: { document, variables, context, refetchQueries } } = config;
             const data = cleanData(formData, this.state.schema.properties || {});
-            this.apolloClient.mutate({
+            client.mutate({
                 mutation: document,
                 refetchQueries,
                 variables: {
@@ -207,13 +216,14 @@ export class AlineForm extends React.Component<AlineFormProps, AlineFormState> {
     renderForm = () => {
         return (
             <FormRenderer
-                // widgets={widgets}
-                // fields={fields}
+                widgets={widgets}
+                fields={fields}
                 onChange={this.onChange}
                 save={this.save}
                 transformErrors={transformErrors}
                 config={this.props.config}
                 ui={this.props.ui}
+                liveValidate={this.props.liveValidate}
                 schema={this.state.schema}
                 data={this.state.data}
                 subTitle={this.props.subTitle}
