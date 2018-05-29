@@ -1,0 +1,4 @@
+
+/* this file is generated, do not edit and keep it in tsconfig.rootDir scope! */
+
+declare type ApolloFormMutationNames = 'create_case' | 'create_chat' | 'create_chat_message' | 'create_community_list' | 'create_invitation' | 'create_milestone' | 'create_note' | 'create_post' | 'create_project' | 'create_space' | 'create_task' | 'destroy_case' | 'destroy_community_list' | 'destroy_milestone' | 'destroy_note' | 'destroy_planning' | 'destroy_post' | 'destroy_project' | 'extract_link_previews' | 'handle_visibility_case' | 'read_all_notifications' | 'read_chat' | 'read_notification' | 'typing_chat' | 'update_case' | 'update_community_list' | 'update_milestone' | 'update_note' | 'update_portfolio' | 'update_post' | 'update_project' | 'update_space' | 'update_task' | 'update_task_completion' | 'update_user';

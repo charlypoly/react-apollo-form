@@ -3,6 +3,9 @@
 import * as codegen from 'apollo-codegen';
 import * as yargs from 'yargs';
 import * as path from 'path';
+import * as fs from 'fs';
+import { fstat } from 'fs';
+import { generateMutationTypesDef, extractMutationsNames } from './utils';
 
 process.on('unhandledRejection', (error) => { throw error });
 process.on('uncaughtException' as any, handleError);
@@ -57,6 +60,20 @@ yargs
             console.log('[1/1] downloadSchema ...');
             await codegen.downloadSchema(url, output, header, insecure, method);
             console.log('[2/2] generate mutations enum type ...');
+            try {
+                const mutationNames = extractMutationsNames(output);
+                if (mutationNames) {
+                    fs.writeFileSync(
+                        path.resolve('./', 'mutations.d.ts'),
+                        generateMutationTypesDef(mutationNames)
+                    )
+                } else {
+                    console.error('Failed to generate mutations typing');
+                }
+            } catch (error) {
+                console.error(error)
+            }
+            console.log('Done.');
         }
     )
     .fail(function (message, error) {
