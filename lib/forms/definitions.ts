@@ -21,7 +21,7 @@ type PropertiesConfiguration = {
     required?: string[];
 };
 
-export namespace AlineFormBuilder {
+export namespace ApolloFormBuilder {
 
     export const filterProperties = (
         properties: { [k: string]: { title: string } },

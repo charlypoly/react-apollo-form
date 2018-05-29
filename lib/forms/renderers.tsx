@@ -1,18 +1,9 @@
 import * as React from 'react';
-import * as cx from 'classnames';
-import { FormHeader } from '../../common-components/app/FormHeader';
-import PanelFooter from '../../common-components/forms/PanelFooter';
-import Button from '../../common-components/buttons/Button';
-import { reduxStore } from '../../store';
-import { structureActions } from '../../redux/redux.structure';
-import Form, { Widget, Field, UiSchema } from 'react-jsonschema-form';
-import { isMutationConfig, AlineFormConfig } from './utils';
-import { isTruthyWithDefault } from '../../routes/core/utils';
-import { AlineFormUi } from './component';
-import { AlineFieldTemplate } from './fields/FieldTemplate';
-import { ArrayFieldTemplate } from './fields/ArrayFieldTemplate';
+import { ApolloFormConfig, isMutationConfig, isTruthyWithDefault } from './utils';
 import { JSONSchema6 } from 'json-schema';
-import * as formStyles from '../../modules/module/views/ModuleViewForm.css';
+import { ApolloFormUi } from './component';
+import Form, { UiSchema } from 'react-jsonschema-form';
+
 
 export const titleRenderer = ({ title }: { title: string }) => (
     <h2>{title}</h2>
@@ -26,32 +17,22 @@ export interface SaveButtonRendererProps {
 }
 
 export const saveButtonRenderer = (props: SaveButtonRendererProps) => (
-    <Button
-        type="button"
+    <button
         value={
             props.isSaved ?
-                t('Forms.MilestoneForm.Panel.Saved') :
-                t('CommunityList.CreateForm.save')
+                'Saved' :
+                'Save'
         }
-        iconClass={props.isSaved ? 'check' : undefined}
         disabled={!!props.hasError || !props.isDirty}
-        takeFullWidth={true}
-        className={cx(
-            formStyles.formButtonsSubmit,
-            formStyles.formButtonsButton,
-            { [formStyles.formButtonsSubmitSaved]: props.isSaved }
-        )}
         onClick={props.save}
     />
 );
 
 export const cancelButtonRenderer = (props: { cancel?: () => void; }) => (
-    <Button
+    <button
         type="button"
-        value="Fermer"
-        takeFullWidth={true}
+        value="Close"
         onClick={props.cancel}
-        className={formStyles.formButtonsCancel}
     />
 );
 
@@ -63,7 +44,7 @@ export interface ButtonsRendererProps {
     isDirty: boolean;
 }
 export const buttonsRenderer = (props: ButtonsRendererProps) => (
-    <PanelFooter className={formStyles.formButtonsContainer}>
+    <div>
         {cancelButtonRenderer({ cancel: props.cancel })}
         {
             saveButtonRenderer({
@@ -73,7 +54,7 @@ export const buttonsRenderer = (props: ButtonsRendererProps) => (
                 hasError: props.hasError
             })
         }
-    </PanelFooter>
+    </div>
 );
 
 export interface FormRendererProps {
@@ -85,11 +66,11 @@ export interface FormRendererProps {
     save: (data: any) => void;
     // tslint:disable-next-line:no-any
     transformErrors: any;
-    config: AlineFormConfig;
+    config: ApolloFormConfig;
     schema: JSONSchema6;
     data: object;
     isDirty: boolean;
-    ui?: UiSchema & AlineFormUi;
+    ui?: UiSchema & ApolloFormUi;
     subTitle?: string;
     liveValidate?: boolean;
 }
@@ -117,7 +98,6 @@ export class FormRenderer extends React.Component<FormRendererProps> {
         return (
             <Form
                 liveValidate={isTruthyWithDefault(props.liveValidate, false)}
-                className={formStyles.form}
                 schema={props.schema}
                 uiSchema={props.ui || {}}
                 widgets={props.widgets}
@@ -126,8 +106,6 @@ export class FormRenderer extends React.Component<FormRendererProps> {
                 formData={props.data}
                 onSubmit={props.save}
                 onChange={props.onChange}
-                ArrayFieldTemplate={ArrayFieldTemplate}
-                FieldTemplate={AlineFieldTemplate}
                 showErrorList={isTruthyWithDefault(props.ui ? props.ui.showErrorsList : false, false)}
                 // tslint:disable-next-line:no-any
                 {...{ ErrorList: props.ui ? props.ui.errorListComponent : undefined } as any}

@@ -1,14 +1,14 @@
 // tslint:disable:no-any
-import { get, transform, unset, merge, map, set, has, isPlainObject, last, take, cloneDeep, uniq } from 'lodash';
-import { AlineFormBuilder, MutationTypes } from './definitions';
+import { get, transform, unset, merge, map, set, has, isPlainObject, last, take, cloneDeep, uniq, isUndefined } from 'lodash';
+import { ApolloFormBuilder } from './definitions';
 import { DocumentNode } from 'graphql';
 import { JSONSchema6 } from 'json-schema';
 import { retrieveSchema } from 'react-jsonschema-form/lib/utils';
 import { PureQueryOptions } from 'apollo-client';
 import { RefetchQueriesProviderFn } from 'react-apollo';
 
-// AlineForm options object is composed of 2 modes : "mutation" or "manual"
-export type AlineFormConfigBase = {
+// ApolloForm options object is composed of 2 modes : "mutation" or "manual"
+export type ApolloFormConfigBase = {
     name?: string;
     // ability to ignore specific fields, eg: ["user.id"]
     ignoreFields?: string[];
@@ -20,9 +20,9 @@ export type AlineFormConfigBase = {
     augment?: object;
 };
 
-export interface AlineFormConfigMutation extends AlineFormConfigBase {
+export interface ApolloFormConfigMutation<T={}> extends ApolloFormConfigBase {
     mutation: {
-        name: MutationTypes;
+        name: T;
         document: DocumentNode;
         variables?: object;
         context?: object;
@@ -30,20 +30,20 @@ export interface AlineFormConfigMutation extends AlineFormConfigBase {
     };
 }
 
-export interface AlineFormConfigManual extends AlineFormConfigBase {
+export interface ApolloFormConfigManual extends ApolloFormConfigBase {
     schema: object;
     saveData: (formData: any) => any;
 }
 
-export type AlineFormConfig = AlineFormConfigManual | AlineFormConfigMutation;
+export type ApolloFormConfig<T={}> = ApolloFormConfigManual | ApolloFormConfigMutation<T>;
 
 // type guard
-export const isMutationConfig = (config: AlineFormConfig): config is AlineFormConfigMutation => {
+export const isMutationConfig = (config: ApolloFormConfig): config is ApolloFormConfigMutation => {
     return !!get(config, 'mutation') && get(config, 'mutation.name');
 };
 
 // Given a schema, expand properties that reference a definition
-export const flattenSchemaProperties = (schema: any) => {
+export const flattenSchemaProperties = (schema: any): any => {
     return transform(
         schema.properties,
         (result, value, key) => {
@@ -59,14 +59,14 @@ export const flattenSchemaProperties = (schema: any) => {
 };
 
 // Given a config, return a valid JSON Schema
-export const getSchemaFromConfig = (config: AlineFormConfig, title?: string): JSONSchema6 => {
+export const getSchemaFromConfig = (config: ApolloFormConfig, title?: string): JSONSchema6 => {
     let schema: any;
     // generated schema given mode: "manual" or "mutation"
     if (!isMutationConfig(config)) {
         schema = config.schema;
     } else {
-        const mutationConfig = AlineFormBuilder.getMutationConfig(config.mutation.name);
-        schema = AlineFormBuilder.getSchema(
+        const mutationConfig = ApolloFormBuilder.getMutationConfig(config.mutation.name);
+        schema = ApolloFormBuilder.getSchema(
             mutationConfig.properties as any,
             mutationConfig.required
         );
@@ -146,4 +146,10 @@ export const cleanData = (formData: object, properties: object, parentPath: stri
         },
         {}
     );
+};
+
+// awesome util for all components
+//      - Get prop boolean value even if undefined
+export const isTruthyWithDefault = (value: undefined | boolean, defaultValue = true) => {
+    return isUndefined(value) ? defaultValue : !!value;
 };
