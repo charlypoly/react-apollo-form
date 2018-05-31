@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-
 import * as codegen from 'apollo-codegen';
 import * as yargs from 'yargs';
 import * as path from 'path';
 import * as fs from 'fs';
 import { fstat } from 'fs';
 import { generateMutationTypesDef, extractMutationsNames } from './utils';
+import { fromIntrospectionQuery } from 'graphql-2-json-schema';
 
 process.on('unhandledRejection', (error) => { throw error });
 process.on('uncaughtException' as any, handleError);
@@ -57,9 +57,9 @@ yargs
         async argv => {
             const { url, output, header, insecure, method } = argv;
 
-            console.log('[1/1] downloadSchema ...');
+            console.log('[1/3] downloadSchema ...');
             await codegen.downloadSchema(url, output, header, insecure, method);
-            console.log('[2/2] generate mutations enum type ...');
+            console.log('[2/3] generate mutations enum type ...');
             try {
                 const mutationNames = extractMutationsNames(output);
                 if (mutationNames) {
@@ -72,6 +72,19 @@ yargs
                 }
             } catch (error) {
                 console.error(error)
+            }
+            console.log('[3/3] generate json schema file ...');
+
+            try {
+                const jsonSchemaObj = fromIntrospectionQuery(JSON.parse(fs.readFileSync(output).toString()).data);
+
+                fs.writeFileSync(
+                    path.resolve('./', 'apollo-form-json-schema.json'),
+                    JSON.stringify(jsonSchemaObj)
+                )
+
+            } catch (error) {
+                console.error(error);
             }
             console.log('Done.');
         }

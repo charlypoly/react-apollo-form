@@ -20,9 +20,9 @@ export type ApolloFormConfigBase = {
     augment?: object;
 };
 
-export interface ApolloFormConfigMutation<T={}> extends ApolloFormConfigBase {
+export interface ApolloFormConfigMutation extends ApolloFormConfigBase {
     mutation: {
-        name: T;
+        name: string;
         document: DocumentNode;
         variables?: object;
         context?: object;
@@ -35,7 +35,7 @@ export interface ApolloFormConfigManual extends ApolloFormConfigBase {
     saveData: (formData: any) => any;
 }
 
-export type ApolloFormConfig<T={}> = ApolloFormConfigManual | ApolloFormConfigMutation<T>;
+export type ApolloFormConfig<T={}> = ApolloFormConfigManual | ApolloFormConfigMutation;
 
 // type guard
 export const isMutationConfig = (config: ApolloFormConfig): config is ApolloFormConfigMutation => {
@@ -125,7 +125,8 @@ export type ReactJsonschemaFormError = {
 export const transformErrors = (prefix: string) => (errors: ReactJsonschemaFormError[]) => {
     return errors.map(error => ({
         ...error,
-        message: t(`FormError.${prefix}${error.property}.${error.name}`)
+        message: `FormError.${prefix}${error.property}.${error.name}`
+        // message: t(`FormError.${prefix}${error.property}.${error.name}`)
     }));
 };
 

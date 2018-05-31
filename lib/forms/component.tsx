@@ -22,6 +22,7 @@ import { cancelButtonRenderer } from './renderers';
 import { FormRenderer } from './renderers';
 import { IntrospectionQuery } from 'graphql';
 import ApolloClient from 'apollo-client';
+import { isString } from 'lodash';
 
 export type ErrorListComponent = React.SFC<{
     errors: ReactJsonschemaFormError[];
@@ -47,7 +48,7 @@ export type ApolloFormProps<T> = {
     data: any;
     title?: string;
     subTitle?: string;
-    config: ApolloFormConfig<T>;
+    config: ApolloFormConfig & { mutation: { name: T } };
     onSave?: (data: object) => void;
     onCancel?: () => void;
     ui?: UiSchema & ApolloFormUi;
@@ -98,11 +99,14 @@ export type IntrospectionQueryFile = { data: IntrospectionQuery };
 
 export interface ApolloFormConfigureOptions {
     client: ApolloClient<any>;
-    schema: IntrospectionQueryFile | string;
+    graphQLIntrospectionSchema: IntrospectionQueryFile | string;
     i18n?: (key: string) => string;
 }
 
 export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions) {
+    const graphQLIntrospectionSchema: IntrospectionQueryFile = isString(opts.graphQLIntrospectionSchema) ?
+        require(opts.graphQLIntrospectionSchema) :
+        opts.graphQLIntrospectionSchema;
     return class ApolloForm extends React.Component<ApolloFormProps<MutationNamesType>, ApolloFormState> {
 
         submitBtn!: HTMLInputElement | null;

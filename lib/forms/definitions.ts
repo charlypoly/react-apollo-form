@@ -3,11 +3,6 @@
 import * as definitions from '../JSON-schema.json';
 import { reduce, omit, pick } from 'lodash';
 
-export const _mutations = _def.Mutation.properties;
-export type MutationTypes = ApolloFormMutationNames;
-
-export const getFormDefinitions = () => _def;
-
 type FromMutationOptions = {
     exclude?: string[];
 };
