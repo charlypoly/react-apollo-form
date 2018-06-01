@@ -57,10 +57,14 @@ yargs
         async argv => {
             const { url, output, header, insecure, method } = argv;
 
-            console.log('[1/3] downloadSchema ...');
-            await codegen.downloadSchema(url, output, header, insecure, method);
-            console.log('[2/3] generate mutations enum type ...');
             try {
+                // ------
+                console.log('[1/3] downloadSchema ...');
+                await codegen.downloadSchema(url, output, header, insecure, method);
+
+                // ------
+                console.log('[2/3] generate mutations enum type ...');
+
                 const mutationNames = extractMutationsNames(output);
                 if (mutationNames) {
                     fs.writeFileSync(
@@ -70,22 +74,20 @@ yargs
                 } else {
                     console.error('Failed to generate mutations typing');
                 }
-            } catch (error) {
-                console.error(error)
-            }
-            console.log('[3/3] generate json schema file ...');
+                // ------
+                console.log('[3/3] generate json schema file ...');
 
-            try {
                 const jsonSchemaObj = fromIntrospectionQuery(JSON.parse(fs.readFileSync(output).toString()).data);
 
                 fs.writeFileSync(
                     path.resolve('./', 'apollo-form-json-schema.json'),
                     JSON.stringify(jsonSchemaObj)
                 )
-
             } catch (error) {
-                console.error(error);
+                console.error(error)
             }
+            console.log('[3/3] generate json schema file ...');
+
             console.log('Done.');
         }
     )
