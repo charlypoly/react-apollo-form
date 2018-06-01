@@ -9,6 +9,7 @@ import { JSONSchema6 } from 'json-schema';
 import { keys } from 'lodash';
 import { schema } from '../graphql-mock';
 import { fromIntrospectionQuery } from 'graphql-2-json-schema';
+const { Button } = require('semantic-ui-react');
 const { withKnobs, select, array, object } = require('@storybook/addon-knobs/react');
 
 const introspection = graphqlSync(schema, introspectionQuery).data as IntrospectionQuery;
@@ -42,7 +43,18 @@ storiesOf('ApolloForm', module)
                                 }
                             }}
                             data={{}}
-                        />
+                        >
+                            {
+                                form => (
+                                    <div>
+                                        {form.form()}
+                                        <Button onClick={form.save}>
+                                            Save
+                                        </Button>
+                                    </div>
+                                )
+                            }
+                        </Form>
                     );
                 }}
             </ApolloConsumer>
