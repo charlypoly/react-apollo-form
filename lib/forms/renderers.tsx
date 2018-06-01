@@ -18,22 +18,24 @@ export interface SaveButtonRendererProps {
 
 export const saveButtonRenderer = (props: SaveButtonRendererProps) => (
     <button
-        value={
+        disabled={!!props.hasError || !props.isDirty}
+        onClick={props.save}
+    >
+        {
             props.isSaved ?
                 'Saved' :
                 'Save'
         }
-        disabled={!!props.hasError || !props.isDirty}
-        onClick={props.save}
-    />
+    </button>
 );
 
 export const cancelButtonRenderer = (props: { cancel?: () => void; }) => (
     <button
         type="button"
-        value="Close"
         onClick={props.cancel}
-    />
+    >
+        Close
+    </button>
 );
 
 export interface ButtonsRendererProps {

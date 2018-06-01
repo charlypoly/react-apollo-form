@@ -35,7 +35,7 @@ export interface ApolloFormConfigManual extends ApolloFormConfigBase {
     saveData: (formData: any) => any;
 }
 
-export type ApolloFormConfig<T={}> = ApolloFormConfigManual | ApolloFormConfigMutation;
+export type ApolloFormConfig = ApolloFormConfigManual | ApolloFormConfigMutation;
 
 // type guard
 export const isMutationConfig = (config: ApolloFormConfig): config is ApolloFormConfigMutation => {
@@ -59,14 +59,15 @@ export const flattenSchemaProperties = (schema: any): any => {
 };
 
 // Given a config, return a valid JSON Schema
-export const getSchemaFromConfig = (config: ApolloFormConfig, title?: string): JSONSchema6 => {
+export const getSchemaFromConfig = (jsonSchema: JSONSchema6, config: ApolloFormConfig, title?: string): JSONSchema6 => {
     let schema: any;
     // generated schema given mode: "manual" or "mutation"
     if (!isMutationConfig(config)) {
         schema = config.schema;
     } else {
-        const mutationConfig = ApolloFormBuilder.getMutationConfig(config.mutation.name);
+        const mutationConfig = ApolloFormBuilder.getMutationConfig(jsonSchema, config.mutation.name);
         schema = ApolloFormBuilder.getSchema(
+            jsonSchema,
             mutationConfig.properties as any,
             mutationConfig.required
         );

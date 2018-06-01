@@ -2,6 +2,7 @@
 // tslint:disable:no-any
 import * as definitions from '../JSON-schema.json';
 import { reduce, omit, pick } from 'lodash';
+import { JSONSchema6 } from 'json-schema';
 
 type FromMutationOptions = {
     exclude?: string[];
@@ -30,18 +31,20 @@ export namespace ApolloFormBuilder {
 
     // Extract mutation arguments to valid JSON Schema properties
     export const getMutationConfig = (
-        name: keyof typeof _mutations,
+        jsonSchema: JSONSchema6,
+        name: string,
         options: FromMutationOptions = defaultFromMutationOptions
     ): PropertiesConfiguration => {
-        const mutation = _mutations[name];
+        const mutation = (jsonSchema.properties.Mutation as JSONSchema6).properties[name] as JSONSchema6;
         if (mutation) {
-            if (mutation.arguments) {
+            const args = mutation.properties.arguments as JSONSchema6;
+            if (args) {
                 return {
                     properties: filterProperties(
-                        reduce(
-                            mutation.arguments,
-                            (prev, curr) => {
-                                (prev as any)[(curr as any).title] = curr;
+                        reduce<JSONSchema6, { [k: string]: any }>(
+                            args.properties,
+                            (prev, curr, k) => {
+                                prev[k] = curr;
                                 return prev;
                             },
                             {}
@@ -49,7 +52,7 @@ export namespace ApolloFormBuilder {
                         options.exclude!,
                         'exclusive'
                     ),
-                    required: (mutation.required as string[]).filter(r => !(options.exclude || []).includes(r))
+                    required: mutation.required.filter(r => !(options.exclude || []).includes(r))
                 };
             } else {
                 console.error(`mutation ${name} has no arguments`);
@@ -60,12 +63,12 @@ export namespace ApolloFormBuilder {
         return {};
     };
 
-    export const getSchema = (properties: object, required: string[] = []) => {
+    export const getSchema = (jsonSchema: JSONSchema6, properties: object, required: string[] = []) => {
         return {
             type: 'object',
             properties,
             required,
-            definitions: getFormDefinitions()
+            definitions: jsonSchema.definitions || {}
         } as any;
     };
 }

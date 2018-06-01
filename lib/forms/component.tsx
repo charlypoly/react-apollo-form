@@ -99,14 +99,12 @@ export type IntrospectionQueryFile = { data: IntrospectionQuery };
 
 export interface ApolloFormConfigureOptions {
     client: ApolloClient<any>;
-    graphQLIntrospectionSchema: IntrospectionQueryFile | string;
+    jsonSchema: JSONSchema6;
     i18n?: (key: string) => string;
 }
 
 export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions) {
-    const graphQLIntrospectionSchema: IntrospectionQueryFile = isString(opts.graphQLIntrospectionSchema) ?
-        require(opts.graphQLIntrospectionSchema) :
-        opts.graphQLIntrospectionSchema;
+    const jsonSchema: JSONSchema6 = opts.jsonSchema;
     return class ApolloForm extends React.Component<ApolloFormProps<MutationNamesType>, ApolloFormState> {
 
         submitBtn!: HTMLInputElement | null;
@@ -119,11 +117,11 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
             data: {}
         };
 
-        static getDerivedStateFromProps(nextProps: ApolloFormProps<{}>) {
-            return {
-                schema: getSchemaFromConfig(nextProps.config, nextProps.title),
-                data: nextProps.data
-            };
+        componentDidMount() {
+            this.setState(() => ({
+                schema: getSchemaFromConfig(jsonSchema, this.props.config, this.props.title),
+                data: this.props.data
+            }))
         }
 
         componentDidUpdate(prevProps: ApolloFormProps<MutationNamesType>) {
@@ -135,12 +133,12 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                     const previousMutationName = prevConfig.mutation.name;
                     if (currentMutationName !== previousMutationName) {
                         this.setState({
-                            schema: getSchemaFromConfig(config, this.props.title)
+                            schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
                         });
                     }
                 } else {
                     this.setState({
-                        schema: getSchemaFromConfig(config, this.props.title)
+                        schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
                     });
                 }
             }
