@@ -1,28 +1,34 @@
+import { ApolloClient } from 'apollo-client';
+import { IntrospectionQuery } from 'graphql';
+import { JSONSchema6 } from 'json-schema';
+import { isString } from 'lodash';
 import * as React from 'react';
 import {
-    ReactJsonschemaFormError,
-    ApolloFormConfig,
-    getSchemaFromConfig,
-    isMutationConfig,
-    cleanData,
-    transformErrors
-} from "./utils";
-import {
-    UiSchema,
-    FieldTemplateProps,
     ArrayFieldTemplateProps,
+    FieldTemplateProps,
+    IChangeEvent,
     ObjectFieldTemplateProps,
-    IChangeEvent
-} from "react-jsonschema-form";
-import { JSONSchema6 } from 'json-schema';
-import { titleRenderer } from './renderers';
+    UiSchema
+} from 'react-jsonschema-form';
 import { buttonsRenderer } from './renderers';
-import { saveButtonRenderer } from './renderers';
 import { cancelButtonRenderer } from './renderers';
 import { FormRenderer } from './renderers';
-import { IntrospectionQuery } from 'graphql';
-import ApolloClient from 'apollo-client';
-import { isString } from 'lodash';
+import {
+    titleRenderer,
+    ButtonsRendererProps,
+    CancelButtonRendererProps,
+    SaveButtonRendererProps,
+    TitleRendererProps
+} from './renderers';
+import { saveButtonRenderer } from './renderers';
+import {
+    cleanData,
+    getSchemaFromConfig,
+    isMutationConfig,
+    transformErrors,
+    ApolloFormConfig,
+    ReactJsonschemaFormError
+} from './utils';
 
 export type ErrorListComponent = React.SFC<{
     errors: ReactJsonschemaFormError[];
@@ -37,14 +43,10 @@ export type ApolloFormUi = {
     showErrorsList?: boolean;
     showErrorsInline?: boolean;
     errorListComponent?: ErrorListComponent;
-    templates?: {
-        FieldTemplate?: React.StatelessComponent<FieldTemplateProps>;
-        ArrayFieldTemplate?: React.StatelessComponent<ArrayFieldTemplateProps>;
-        ObjectFieldTemplate?: React.StatelessComponent<ObjectFieldTemplateProps>;
-    }
 };
 
 export type ApolloFormProps<T> = {
+    // tslint:disable-next-line:no-any
     data: any;
     title?: string;
     subTitle?: string;
@@ -61,6 +63,7 @@ export interface ApolloFormState {
     isSaved: boolean;
     hasError: boolean;
     schema: JSONSchema6;
+    // tslint:disable-next-line:no-any
     data: any;
 }
 
@@ -73,38 +76,66 @@ export interface ApolloRenderProps {
     cancelButton: () => React.ReactNode;
     // actions
     cancel: () => void;
+    // tslint:disable-next-line:no-any
     save: (args: any) => void;
     // state
     isDirty: boolean;
     isSaved: boolean;
     hasError: boolean;
+    // tslint:disable-next-line:no-any
     data: any;
 }
 
-const widgets: { [k: string]: any } = {};
-const fields: { [k: string]: any } = {};
-export const register = (type: 'widget' | 'field', name: string, component: any) => {
-    // tslint:disable-next-line:switch-default
-    switch (type) {
-        case 'field':
-            fields[name] = component;
-            break;
-        case 'widget':
-            widgets[name] = component;
-            break;
-    }
-};
+export interface ApolloFormTheme {
+    templates: {
+        FieldTemplate?: React.StatelessComponent<FieldTemplateProps>;
+        ArrayFieldTemplate?: React.StatelessComponent<ArrayFieldTemplateProps>;
+        ObjectFieldTemplate?: React.StatelessComponent<ObjectFieldTemplateProps>;
+    };
+    // tslint:disable-next-line:no-any
+    widgets: { [k: string]: any };
+    // tslint:disable-next-line:no-any
+    fields: { [k: string]: any };
+    renderers: {
+        header: React.SFC<TitleRendererProps>;
+        buttons: React.SFC<ButtonsRendererProps>;
+        saveButton: React.SFC<SaveButtonRendererProps>;
+        cancelButton: React.SFC<CancelButtonRendererProps>;
+    };
+}
 
-export type IntrospectionQueryFile = { data: IntrospectionQuery };
+export interface ApolloFormConfigureTheme {
+    templates?: ApolloFormTheme['templates'];
+    widgets?: ApolloFormTheme['widgets'];
+    fields?: ApolloFormTheme['fields'];
+    renderers?: Partial<ApolloFormTheme['renderers']>;
+}
 
 export interface ApolloFormConfigureOptions {
+    // tslint:disable-next-line:no-any
     client: ApolloClient<any>;
+    theme?: ApolloFormConfigureTheme;
     jsonSchema: JSONSchema6;
     i18n?: (key: string) => string;
 }
 
+export const getTheme = (theme?: ApolloFormConfigureTheme): ApolloFormTheme => ({
+    templates: theme && theme.templates ? theme.templates : {},
+    fields: theme && theme.fields ? theme.fields : {},
+    widgets: theme && theme.widgets ? theme.widgets : {},
+    renderers: {
+        buttons: theme && theme.renderers && theme.renderers.buttons ? theme.renderers.buttons : buttonsRenderer,
+        cancelButton: theme && theme.renderers && theme.renderers.cancelButton ?
+            theme.renderers.cancelButton : cancelButtonRenderer,
+        saveButton: theme && theme.renderers && theme.renderers.saveButton ?
+            theme.renderers.saveButton : saveButtonRenderer,
+        header: theme && theme.renderers && theme.renderers.header ? theme.renderers.header : titleRenderer,
+    }
+});
+
 export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions) {
     const jsonSchema: JSONSchema6 = opts.jsonSchema;
+    const theme = getTheme(opts.theme);
     return class ApolloForm extends React.Component<ApolloFormProps<MutationNamesType>, ApolloFormState> {
 
         submitBtn!: HTMLInputElement | null;
@@ -121,7 +152,7 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
             this.setState(() => ({
                 schema: getSchemaFromConfig(jsonSchema, this.props.config, this.props.title),
                 data: this.props.data
-            }))
+            }));
         }
 
         componentDidUpdate(prevProps: ApolloFormProps<MutationNamesType>) {
@@ -145,6 +176,7 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
         }
 
         // build save handler for <Form> component
+        // tslint:disable-next-line:no-any
         save = ({ formData }: any) => { // TODO: remove args
             const { config, onSave } = this.props;
             if (isMutationConfig(config)) {
@@ -193,22 +225,24 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
 
         childrenProps = (): ApolloRenderProps => ({
             // renderers
-            header: () => titleRenderer({ title: this.props.title || 'Form' }),
+            header: () => theme.renderers.header({ title: this.props.title || 'Form' }),
             form: this.renderForm,
-            buttons: () => buttonsRenderer({
+            buttons: () => theme.renderers.buttons({
+                cancelButtonRenderer: theme.renderers.cancelButton,
+                saveButtonRenderer: theme.renderers.saveButton,
                 cancel: this.cancel,
                 save: this.simulateSubmit,
                 hasError: this.state.hasError,
                 isSaved: this.state.isSaved,
                 isDirty: this.state.isDirty
             }),
-            saveButton: () => saveButtonRenderer({
+            saveButton: () => theme.renderers.saveButton({
                 save: this.simulateSubmit,
                 hasError: this.state.hasError,
                 isDirty: this.state.isDirty,
                 isSaved: this.state.isSaved
             }),
-            cancelButton: () => cancelButtonRenderer({ cancel: this.cancel }),
+            cancelButton: () => theme.renderers.cancelButton({ cancel: this.cancel }),
             // actions
             cancel: this.cancel,
             save: this.simulateSubmit,
@@ -234,8 +268,7 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
         renderForm = () => {
             return (
                 <FormRenderer
-                    widgets={widgets}
-                    fields={fields}
+                    theme={theme}
                     onChange={this.onChange}
                     save={this.save}
                     transformErrors={transformErrors}
@@ -261,5 +294,5 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                     this.renderLayout()
             );
         }
-    }
-};
+    };
+}

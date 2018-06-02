@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { ApolloFormConfig, isMutationConfig, isTruthyWithDefault } from './utils';
 import { JSONSchema6 } from 'json-schema';
-import { ApolloFormUi } from './component';
+import * as React from 'react';
 import Form, { UiSchema } from 'react-jsonschema-form';
+import { ApolloFormTheme, ApolloFormUi } from './component';
+import { isMutationConfig, isTruthyWithDefault, ApolloFormConfig } from './utils';
 
-
-export const titleRenderer = ({ title }: { title: string }) => (
+export interface TitleRendererProps { title: string; }
+export const titleRenderer = ({ title }: TitleRendererProps) => (
     <h2>{title}</h2>
 );
 
@@ -29,7 +29,8 @@ export const saveButtonRenderer = (props: SaveButtonRendererProps) => (
     </button>
 );
 
-export const cancelButtonRenderer = (props: { cancel?: () => void; }) => (
+export interface CancelButtonRendererProps { cancel?: () => void; }
+export const cancelButtonRenderer = (props: CancelButtonRendererProps) => (
     <button
         type="button"
         onClick={props.cancel}
@@ -41,15 +42,17 @@ export const cancelButtonRenderer = (props: { cancel?: () => void; }) => (
 export interface ButtonsRendererProps {
     cancel?: () => void;
     save?: () => void;
+    saveButtonRenderer: React.SFC<SaveButtonRendererProps>;
+    cancelButtonRenderer: React.SFC<CancelButtonRendererProps>;
     isSaved: boolean;
     hasError: boolean;
     isDirty: boolean;
 }
 export const buttonsRenderer = (props: ButtonsRendererProps) => (
     <div>
-        {cancelButtonRenderer({ cancel: props.cancel })}
+        {props.cancelButtonRenderer({ cancel: props.cancel })}
         {
-            saveButtonRenderer({
+            props.saveButtonRenderer({
                 save: props.save,
                 isSaved: props.isSaved,
                 isDirty: props.isDirty,
@@ -60,8 +63,7 @@ export const buttonsRenderer = (props: ButtonsRendererProps) => (
 );
 
 export interface FormRendererProps {
-    widgets: object;
-    fields: object;
+    theme: ApolloFormTheme;
     // tslint:disable-next-line:no-any
     onChange: (data: any) => void;
     // tslint:disable-next-line:no-any
@@ -102,12 +104,15 @@ export class FormRenderer extends React.Component<FormRendererProps> {
                 liveValidate={isTruthyWithDefault(props.liveValidate, false)}
                 schema={props.schema}
                 uiSchema={props.ui || {}}
-                widgets={props.widgets}
+                widgets={props.theme.widgets}
                 formContext={formContext}
-                fields={props.fields}
+                fields={props.theme.fields}
                 formData={props.data}
                 onSubmit={props.save}
                 onChange={props.onChange}
+                ArrayFieldTemplate={props.theme.templates.ArrayFieldTemplate}
+                FieldTemplate={props.theme.templates.FieldTemplate}
+                ObjectFieldTemplate={props.theme.templates.ObjectFieldTemplate}
                 showErrorList={isTruthyWithDefault(props.ui ? props.ui.showErrorsList : false, false)}
                 // tslint:disable-next-line:no-any
                 {...{ ErrorList: props.ui ? props.ui.errorListComponent : undefined } as any}
