@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.0-1"></a>
+# [0.1.0-1](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.0-0...v0.1.0-1) (2018-06-04)
+
+
+### Bug Fixes
+
+* **build:** bin npm ([70a2109](https://github.com/wittydeveloper/react-apollo-form/commit/70a2109))
+
+
+### Features
+
+* **cli:** working version ([73becff](https://github.com/wittydeveloper/react-apollo-form/commit/73becff))
+
+
+
 <a name="0.1.0-0"></a>
 # 0.1.0-0 (2018-06-04)
 

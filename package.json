@@ -1,6 +1,6 @@
 {
   "name": "react-apollo-form",
-  "version": "0.1.0-0",
+  "version": "0.1.0-1",
   "main": "build/index.js",
   "bin": {
     "react-apollo-form": "./build/lib/cli.js"
