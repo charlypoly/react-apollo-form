@@ -2,7 +2,9 @@
   "name": "react-apollo-form",
   "version": "0.1.0-0",
   "main": "build/index.js",
-  "bin": "build/lib/cli.js",
+  "bin": {
+    "react-apollo-form": "./build/lib/cli.js"
+  },
   "repository": "git@github.com:wittydeveloper/react-apollo-form.git",
   "author": "Charly POLY <cpoly55@gmail.com>",
   "license": "MIT",
