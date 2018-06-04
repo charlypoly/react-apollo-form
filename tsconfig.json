@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "skipLibCheck": true,
+        "target": "es5",
+        "newLine": "LF",
+        "jsx": "react",
+        "lib": [
+            "es7",
+            "es6",
+            "dom"
+        ],
+        "declaration": true,
+        "outDir": "./dist",
+        "rootDir": "."
+    }
+}
