@@ -22,6 +22,7 @@ import {
 } from './renderers';
 import { saveButtonRenderer } from './renderers';
 import {
+    applyConditionsToSchema,
     cleanData,
     getSchemaFromConfig,
     isMutationConfig,
@@ -50,7 +51,7 @@ export type ApolloFormProps<T> = {
     data: any;
     title?: string;
     subTitle?: string;
-    config: ApolloFormConfig & { mutation: { name: T } };
+    config: ApolloFormConfig & { mutation?: { name: T } };
     onSave?: (data: object) => void;
     onCancel?: () => void;
     ui?: UiSchema & ApolloFormUi;
@@ -63,6 +64,7 @@ export interface ApolloFormState {
     isSaved: boolean;
     hasError: boolean;
     schema: JSONSchema6;
+    schemaWithConditionals: JSONSchema6;
     // tslint:disable-next-line:no-any
     data: any;
 }
@@ -145,13 +147,20 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
             isSaved: false,
             hasError: false,
             schema: {},
+            schemaWithConditionals: {},
             data: {}
         };
 
         componentDidMount() {
+            const schema = getSchemaFromConfig(jsonSchema, this.props.config, this.props.title);
             this.setState(() => ({
-                schema: getSchemaFromConfig(jsonSchema, this.props.config, this.props.title),
-                data: this.props.data
+                schema,
+                data: this.props.data,
+                schemaWithConditionals: applyConditionsToSchema(
+                    schema,
+                    this.props.ui,
+                    this.state.data
+                )
             }));
         }
 
@@ -163,14 +172,32 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                     const currentMutationName = config.mutation.name;
                     const previousMutationName = prevConfig.mutation.name;
                     if (currentMutationName !== previousMutationName) {
-                        this.setState({
-                            schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
-                        });
+                        this.setState(
+                            {
+                                schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
+                            },
+                            () => this.setState({
+                                schemaWithConditionals: applyConditionsToSchema(
+                                    this.state.schema,
+                                    this.props.ui,
+                                    this.state.data
+                                )
+                            })
+                        );
                     }
                 } else {
-                    this.setState({
-                        schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
-                    });
+                    this.setState(
+                        {
+                            schema: getSchemaFromConfig(jsonSchema, config, this.props.title)
+                        },
+                        () => this.setState({
+                            schemaWithConditionals: applyConditionsToSchema(
+                                this.state.schema,
+                                this.props.ui,
+                                this.state.data
+                            )
+                        })
+                    );
                 }
             }
         }
@@ -209,9 +236,15 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
         }
 
         onChange = (data: IChangeEvent) => {
+            const newSchema = applyConditionsToSchema(
+                this.state.schema,
+                this.props.ui,
+                data.formData
+            );
             this.setState(() => ({
                 isDirty: true,
-                data: data.formData,
+                data: cleanData(data.formData, newSchema.properties),
+                schemaWithConditionals: newSchema,
                 hasError: data.errors.length > 0,
                 isSaved: false
             }));
@@ -275,7 +308,7 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                     config={this.props.config}
                     ui={this.props.ui}
                     liveValidate={this.props.liveValidate}
-                    schema={this.state.schema}
+                    schema={this.state.schemaWithConditionals}
                     data={this.state.data}
                     subTitle={this.props.subTitle}
                     isDirty={this.state.isDirty}

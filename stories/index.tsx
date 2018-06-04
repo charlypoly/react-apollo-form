@@ -1,5 +1,6 @@
 // tslint:disable-next-line:no-unused-variable
 import { storiesOf } from '@storybook/react';
+import { schema, types } from 'functional-json-schema';
 import { graphqlSync, introspectionQuery, DocumentNode, IntrospectionQuery } from 'graphql';
 import { fromIntrospectionQuery } from 'graphql-2-json-schema';
 import gql from 'graphql-tag';
@@ -8,12 +9,13 @@ import { keys } from 'lodash';
 import * as React from 'react';
 import { ApolloConsumer, Mutation } from 'react-apollo';
 import { FieldProps } from 'react-jsonschema-form';
-import { schema } from '../graphql-mock';
-import { configure, ApolloFormConfigureTheme } from '../lib/forms/component';
-const { Button, Input, Checkbox, Header, Form } = require('semantic-ui-react');
+import { schema as mockSchema } from '../graphql-mock';
+import { configure, ApolloFormConfigureTheme, ErrorListComponent } from '../lib/forms/component';
+import { ApolloFormBuilder } from '../lib/forms/definitions';
+const { Button, Input, Checkbox, Header, Form, Message } = require('semantic-ui-react');
 const { withKnobs, select, boolean: bool } = require('@storybook/addon-knobs/react');
 
-const introspection = graphqlSync(schema, introspectionQuery).data as IntrospectionQuery;
+const introspection = graphqlSync(mockSchema, introspectionQuery).data as IntrospectionQuery;
 const jsonSchema = fromIntrospectionQuery(introspection);
 const document = gql`
     mutation createTodo($todo: TodoInputType!) {
@@ -22,6 +24,15 @@ const document = gql`
         }
     }
 `;
+
+const ErrorList: ErrorListComponent = p => (
+    <Message
+        error={true}
+        visible={true}
+        header="There was some errors"
+        list={p.errors.map(e => e.message)}
+    />
+);
 
 const theme: ApolloFormConfigureTheme = {
     templates: {
@@ -51,7 +62,10 @@ const theme: ApolloFormConfigureTheme = {
         ),
         BooleanField: (p: FieldProps) => (
             <Checkbox label={p.title} checked={p.formData} onChange={
-                (e: React.SyntheticEvent<HTMLInputElement>) => p.onChange(e.currentTarget.value)
+                (e: React.SyntheticEvent<HTMLInputElement>, data: object) => {
+                    // tslint:disable-next-line:no-any
+                    p.onChange((data as any).checked);
+                }
             } />
         )
     },
@@ -79,6 +93,8 @@ storiesOf('ApolloForm', module)
             <ApolloConsumer>
                 {client => {
                     const withTheme = bool('withTheme', true);
+                    const liveValidate = bool('liveValidate', false);
+                    const showErrorsList = bool('showErrorsList', true);
                     const ApplicationForm = configure({
                         client,
                         jsonSchema,
@@ -89,6 +105,7 @@ storiesOf('ApolloForm', module)
                     return (
                         <ApplicationForm
                             title={'Todo Form'}
+                            liveValidate={liveValidate}
                             config={{
                                 mutation: {
                                     name: mutationName,
@@ -97,6 +114,8 @@ storiesOf('ApolloForm', module)
                             }}
                             data={{}}
                             ui={{
+                                showErrorsList: showErrorsList,
+                                errorListComponent: ErrorList,
                                 todo: {
                                     name: {
                                         'ui:label': 'Task name'
@@ -114,6 +133,77 @@ storiesOf('ApolloForm', module)
                                             {form.header()}
                                             {form.form()}
                                             {form.buttons()}
+                                            {JSON.stringify(form.data)}
+                                        </div>
+                                    </Form>
+                                )
+                            }
+                        </ApplicationForm>
+                    );
+                }}
+            </ApolloConsumer>
+        );
+    }).add('with conditionals', () => {
+        return (
+            <ApolloConsumer>
+                {client => {
+                    const withTheme = bool('withTheme', true);
+                    const liveValidate = bool('liveValidate', false);
+                    const showErrorsList = bool('showErrorsList', true);
+                    const ApplicationForm = configure({
+                        client,
+                        jsonSchema,
+                        theme: withTheme ? theme : undefined
+                    });
+                    return (
+                        <ApplicationForm
+                            title={'Todo Form'}
+                            liveValidate={liveValidate}
+                            config={{
+                                name: 'todo',
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        shipping: {
+                                            type: 'object',
+                                            properties: {
+                                                billingSameAsDelivery: { type: 'boolean' },
+                                                billing: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        address: { type: 'string' }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } as JSONSchema6,
+                                saveData: data => {
+                                    // tslint:disable-next-line:no-console
+                                    console.log('save !', data);
+                                }
+                            }}
+                            data={{}}
+                            ui={{
+                                showErrorsList: showErrorsList,
+                                errorListComponent: ErrorList,
+                                shipping: {
+                                    billing: {
+                                        'ui:if': {
+                                            'shipping.billingSameAsDelivery': true
+                                        },
+                                    }
+                                }
+                            }}
+                        >
+                            {
+                                form => (
+                                    <Form>
+                                        <div style={{ padding: '20px' }}>
+                                            {form.header()}
+                                            {form.form()}
+                                            {form.buttons()}
+                                            {JSON.stringify(form.data)}
                                         </div>
                                     </Form>
                                 )

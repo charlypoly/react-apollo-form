@@ -1,11 +1,28 @@
 // tslint:disable:no-any
-import { get, transform, unset, merge, map, set, has, isPlainObject, last, take, cloneDeep, uniq, isUndefined } from 'lodash';
-import { ApolloFormBuilder } from './definitions';
+import { PureQueryOptions } from 'apollo-client';
+import { every } from 'async';
 import { DocumentNode } from 'graphql';
 import { JSONSchema6 } from 'json-schema';
-import { retrieveSchema } from 'react-jsonschema-form/lib/utils';
-import { PureQueryOptions } from 'apollo-client';
+import {
+    cloneDeep, filter, get,
+    has, isPlainObject, isUndefined,
+    last,
+    map,
+    merge,
+    set,
+    take,
+    transform,
+    uniq,
+    unset,
+    Dictionary,
+    MemoVoidDictionaryIterator
+} from 'lodash';
 import { RefetchQueriesProviderFn } from 'react-apollo';
+import { UiSchema } from 'react-jsonschema-form';
+import { retrieveSchema } from 'react-jsonschema-form/lib/utils';
+import { isObject } from 'util';
+import { ApolloFormUi } from './component';
+import { ApolloFormBuilder } from './definitions';
 
 // ApolloForm options object is composed of 2 modes : "mutation" or "manual"
 export type ApolloFormConfigBase = {
@@ -31,7 +48,7 @@ export interface ApolloFormConfigMutation extends ApolloFormConfigBase {
 }
 
 export interface ApolloFormConfigManual extends ApolloFormConfigBase {
-    schema: object;
+    schema: JSONSchema6;
     saveData: (formData: any) => any;
 }
 
@@ -58,12 +75,68 @@ export const flattenSchemaProperties = (schema: any): any => {
     );
 };
 
+const applyConditionsReducer =
+    (ui: UiSchema & ApolloFormUi, data: object) =>
+        (acc: JSONSchema6, curr: JSONSchema6, key: string) => {
+            const propUi: (UiSchema & ApolloFormUi) | undefined = get(ui, key);
+            const prop = last(key.split('.'));
+            if (propUi && propUi['ui:if']) {
+                if (
+                    filter(propUi['ui:if'], (predicate, k) => {
+                        const value = get(data, k);
+                        return predicate && predicate !== value;
+                    }).length === 0
+                ) {
+                    Object.assign(acc, curr);
+                }
+            } else if (has(curr, 'properties')) {
+                Object.assign(
+                    acc,
+                    {
+                        [prop]: {
+                            type: 'object',
+                            properties: {},
+                            ...(curr.required ? { required: curr.required } : {})
+                        }
+                    }
+                );
+                map(curr.properties, (v, k) => {
+                    (acc as any)[prop].properties[k] =
+                        applyConditionsReducer(ui, data)({}, v as JSONSchema6, `${key}.${k}`);
+                });
+            } else {
+                Object.assign(acc, curr);
+            }
+            return acc;
+        };
+
+export const applyConditionsToSchema =
+    (jsonSchema: JSONSchema6, ui: UiSchema & ApolloFormUi, data: object): JSONSchema6 => {
+        const schema = cloneDeep(jsonSchema);
+        return schema.properties ?
+            Object.assign(
+                {},
+                schema,
+                {
+                    properties: transform(
+                        schema.properties,
+                        applyConditionsReducer(ui, data),
+                        {}
+                    )
+                }
+            ) :
+            schema;
+    };
+
 // Given a config, return a valid JSON Schema
 export const getSchemaFromConfig = (jsonSchema: JSONSchema6, config: ApolloFormConfig, title?: string): JSONSchema6 => {
     let schema: any;
     // generated schema given mode: "manual" or "mutation"
     if (!isMutationConfig(config)) {
-        schema = config.schema;
+        schema = ApolloFormBuilder.getSchema(
+            jsonSchema,
+            config.schema.properties || {}
+        );
     } else {
         const mutationConfig = ApolloFormBuilder.getMutationConfig(jsonSchema, config.mutation.name);
         schema = ApolloFormBuilder.getSchema(
