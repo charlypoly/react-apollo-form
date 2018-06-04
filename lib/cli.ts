@@ -17,13 +17,14 @@ function handleError(error: string) { console.error(error); process.exit(1); }
 // tslint:disable-next-line:no-unused-expression
 yargs
     .command(
-        'fetch-mutations <url>',
+        'fetch-mutations <url> <outputPath>',
         'Generate typings, and JSON Schema from GraphQL endpoint',
         {
-            output: {
+            outputPath: {
+                alias: 'o',
                 demand: true,
-                describe: 'Output path for GraphQL schema file',
-                default: 'schema.json',
+                describe: 'Output path for generated files',
+                default: '.',
                 normalize: true,
                 coerce: path.resolve,
             },
@@ -59,20 +60,20 @@ yargs
             }
         },
         async argv => {
-            const { url, output, header, insecure, method } = argv;
+            const { url, outputPath, header, insecure, method } = argv;
 
             try {
                 // ------
                 console.log('[1/3] downloadSchema ...');
-                await codegen.downloadSchema(url, output, header, insecure, method);
+                await codegen.downloadSchema(url, path.resolve(outputPath, 'schema.json'), header, insecure, method);
 
                 // ------
                 console.log('[2/3] generate mutations enum type ...');
 
-                const mutationNames = extractMutationsNames(output);
+                const mutationNames = extractMutationsNames(path.resolve(outputPath, 'schema.json'));
                 if (mutationNames) {
                     fs.writeFileSync(
-                        path.resolve('./', 'mutations.d.ts'),
+                        path.resolve(outputPath, 'mutations.d.ts'),
                         generateMutationTypesDef(mutationNames)
                     );
                 } else {
@@ -81,10 +82,12 @@ yargs
                 // ------
                 console.log('[3/3] generate json schema file ...');
 
-                const jsonSchemaObj = fromIntrospectionQuery(JSON.parse(fs.readFileSync(output).toString()).data);
+                const jsonSchemaObj = fromIntrospectionQuery(
+                    JSON.parse(fs.readFileSync(path.resolve(outputPath, 'schema.json')).toString()).data
+                );
 
                 fs.writeFileSync(
-                    path.resolve('./', 'apollo-form-json-schema.json'),
+                    path.resolve(outputPath, 'apollo-form-json-schema.json'),
                     JSON.stringify(jsonSchemaObj)
                 );
             } catch (error) {
