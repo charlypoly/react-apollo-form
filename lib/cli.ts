@@ -1,16 +1,20 @@
 #!/usr/bin/env node
 import * as codegen from 'apollo-codegen';
-import * as yargs from 'yargs';
-import * as path from 'path';
 import * as fs from 'fs';
 import { fstat } from 'fs';
-import { generateMutationTypesDef, extractMutationsNames } from './utils';
 import { fromIntrospectionQuery } from 'graphql-2-json-schema';
+import * as path from 'path';
+import * as yargs from 'yargs';
+import { extractMutationsNames, generateMutationTypesDef } from './utils';
 
-process.on('unhandledRejection', (error) => { throw error });
+// tslint:disable:no-console
+
+process.on('unhandledRejection', error => { throw error; });
+// tslint:disable-next-line:no-any
 process.on('uncaughtException' as any, handleError);
 function handleError(error: string) { console.error(error); process.exit(1); }
 
+// tslint:disable-next-line:no-unused-expression
 yargs
     .command(
         'fetch-mutations <url>',
@@ -27,10 +31,10 @@ yargs
                 alias: 'H',
                 describe: 'Additional header to send to the server as part of the introspection query request',
                 type: 'array',
-                coerce: (arg) => {
+                coerce: arg => {
                     let additionalHeaders: { [k: string]: string } = {};
                     for (const header of arg) {
-                        const separator = header.indexOf(":");
+                        const separator = header.indexOf(':');
                         const name = header.substring(0, separator).trim();
                         const value = header.substring(separator + 1).trim();
                         if (!(name && value)) {
@@ -70,7 +74,7 @@ yargs
                     fs.writeFileSync(
                         path.resolve('./', 'mutations.d.ts'),
                         generateMutationTypesDef(mutationNames)
-                    )
+                    );
                 } else {
                     console.error('Failed to generate mutations typing');
                 }
@@ -82,16 +86,17 @@ yargs
                 fs.writeFileSync(
                     path.resolve('./', 'apollo-form-json-schema.json'),
                     JSON.stringify(jsonSchemaObj)
-                )
+                );
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
             console.log('[3/3] generate json schema file ...');
 
             console.log('Done.');
         }
     )
-    .fail(function (message, error) {
+    // tslint:disable-next-line:no-any
+    .fail(function (message: any, error: any) {
         handleError(message);
     })
     .help()
