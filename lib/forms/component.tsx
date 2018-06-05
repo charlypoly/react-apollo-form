@@ -135,12 +135,14 @@ export const getTheme = (theme?: ApolloFormConfigureTheme): ApolloFormTheme => (
     }
 });
 
-export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions) {
+// tslint:disable-next-line:max-line-length
+export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions): React.ComponentClass<ApolloFormProps<MutationNamesType>> {
+
     const jsonSchema: JSONSchema6 = opts.jsonSchema;
     const theme = getTheme(opts.theme);
     return class ApolloForm extends React.Component<ApolloFormProps<MutationNamesType>, ApolloFormState> {
 
-        submitBtn!: HTMLInputElement | null;
+        submitBtn: HTMLInputElement | null = null;
 
         state: ApolloFormState = {
             isDirty: false,

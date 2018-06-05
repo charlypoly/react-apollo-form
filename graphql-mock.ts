@@ -17,11 +17,12 @@ export const mocks = {
     },
     Mutation: () => {
         return {
-            // @ts-ignore
-            create_todo: (_, variables) => {
+            // tslint:disable-next-line:no-any
+            create_todo: (_: any, variables: any) => {
+                // tslint:disable-next-line:no-console
                 console.log('create_todo()', variables);
             }
-        }
+        };
     }
 };
 
