@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.0-2...v0.1.0) (2018-06-05)
+
+
+### Bug Fixes
+
+* **cli:** remove unnecessary print ([51aef54](https://github.com/wittydeveloper/react-apollo-form/commit/51aef54))
+* **lib:** TypeScript errors resulting in invalid JS generation ([f900272](https://github.com/wittydeveloper/react-apollo-form/commit/f900272))
+
+
+
 <a name="0.1.0-2"></a>
 # [0.1.0-2](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.0-1...v0.1.0-2) (2018-06-05)
 
