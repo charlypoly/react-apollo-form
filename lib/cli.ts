@@ -93,7 +93,6 @@ yargs
             } catch (error) {
                 console.error(error);
             }
-            console.log('[3/3] generate json schema file ...');
 
             console.log('Done.');
         }
