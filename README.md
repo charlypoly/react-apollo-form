@@ -83,7 +83,7 @@ export const ApplicationForm = configure<ApolloFormMutationNames>({
 `ApolloForm` is based on the amazing Mozilla library [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form).
 Most of the questions regarding JSON Schema, validations or rendering are in [react-jsonschema-form documentation](https://github.com/mozilla-services/react-jsonschema-form)
 
-To get started more easily, please read [Understanding react jsonschema form form in 2 minutes
+To get started more easily, please read [Understanding "react-jsonschema-form" in 2 minutes
 ](https://github.com/wittydeveloper/react-apollo-form/wiki/Understanding-react-jsonschema-form-form-in-2-minutes)
 
 The following subjects are specific to `ApolloForm`:
