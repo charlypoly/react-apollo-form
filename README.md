@@ -27,9 +27,10 @@
 - add to your `package.json`, at the `scripts` section :
 
 ```json
-"scripts": {
-    /* ... */
-    "react-apollo-form": "react-apollo-form fetch-mutations <graphql_endpoint> <outpurDir>"
+{
+    "scripts": {
+        "react-apollo-form": "react-apollo-form fetch-mutations <graphql_endpoint> <outpurDir>"
+    }
 }
 
 ```
@@ -80,6 +81,10 @@ export const ApplicationForm = configure<ApolloFormMutationNames>({
 ## API
 
 `ApolloForm` is based on the amazing Mozilla library [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form).
+
+- configure your "Form component"
+- Build a form without mutation
+- [Form rendering customisation](https://github.com/wittydeveloper/react-apollo-form/wiki/Form-Rendering-customisation-with-renderers)
 
 -------------------------
 
