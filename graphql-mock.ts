@@ -18,9 +18,9 @@ export const mocks = {
     Mutation: () => {
         return {
             // tslint:disable-next-line:no-any
-            create_todo: (_: any, variables: any) => {
+            create_todo: () => {
                 // tslint:disable-next-line:no-console
-                console.log('create_todo()', variables);
+                console.log('create_todo()');
             }
         };
     }

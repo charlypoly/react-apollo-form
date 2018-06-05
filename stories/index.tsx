@@ -155,6 +155,7 @@ storiesOf('ApolloForm', module)
                         jsonSchema,
                         theme: withTheme ? theme : undefined
                     });
+
                     return (
                         <ApplicationForm
                             title={'Todo Form'}

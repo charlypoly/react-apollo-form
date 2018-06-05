@@ -8,7 +8,8 @@ import {
     FieldTemplateProps,
     IChangeEvent,
     ObjectFieldTemplateProps,
-    UiSchema
+    UiSchema,
+    WidgetProps
 } from 'react-jsonschema-form';
 import { buttonsRenderer } from './renderers';
 import { cancelButtonRenderer } from './renderers';
@@ -135,8 +136,12 @@ export const getTheme = (theme?: ApolloFormConfigureTheme): ApolloFormTheme => (
     }
 });
 
+export type ApolloFormComponent<T> = React.ComponentClass<ApolloFormProps<T>> & {
+    registerWidget: (name: string, comp: React.SFC<WidgetProps>) => void;
+};
+
 // tslint:disable-next-line:max-line-length
-export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions): React.ComponentClass<ApolloFormProps<MutationNamesType>> {
+export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptions): ApolloFormComponent<MutationNamesType> {
 
     const jsonSchema: JSONSchema6 = opts.jsonSchema;
     const theme = getTheme(opts.theme);
@@ -152,6 +157,10 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
             schemaWithConditionals: {},
             data: {}
         };
+
+        static registerWidget = (name: string, comp: React.SFC<WidgetProps>) => {
+            theme.widgets[name] = comp;
+        }
 
         componentDidMount() {
             const schema = getSchemaFromConfig(jsonSchema, this.props.config, this.props.title);
