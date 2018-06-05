@@ -89,7 +89,9 @@ To get started more easily, please read [Understanding "react-jsonschema-form" i
 The following subjects are specific to `ApolloForm`:
 
 - configure your "Form component"
+- Theming
 - Build a form without mutation
+- [Add a form specific Widget (outside-a-theme)](https://github.com/wittydeveloper/react-apollo-form/wiki/Add-a-form-specific-Widget-(outside-a-theme))
 - [Conditional fields](https://github.com/wittydeveloper/react-apollo-form/wiki/Conditional-fields)
 - [Form rendering customisation](https://github.com/wittydeveloper/react-apollo-form/wiki/Form-Rendering-customisation-with-renderers)
 
