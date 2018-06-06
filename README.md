@@ -6,6 +6,11 @@
 
 -------------------------
 
+### To get started more easily, please read [Getting started: build a GraphQL Form in 5 minutes](https://github.com/wittydeveloper/react-apollo-form/wiki/Getting-started:-build-a-GraphQL-Form-in-5-minutes)
+
+
+-------------------------
+
 ## Pre-requisites
 
 - `apollo-codegen` (globally)
