@@ -54,6 +54,7 @@ export type ApolloFormProps<T> = {
     subTitle?: string;
     config: ApolloFormConfig & { mutation?: { name: T } };
     onSave?: (data: object) => void;
+    onChange?: (data: object) => void;
     onCancel?: () => void;
     ui?: UiSchema & ApolloFormUi;
     children?: React.SFC<ApolloRenderProps>;
@@ -252,13 +253,20 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                 this.props.ui,
                 data.formData
             );
-            this.setState(() => ({
-                isDirty: true,
-                data: cleanData(data.formData, newSchema.properties),
-                schemaWithConditionals: newSchema,
-                hasError: data.errors.length > 0,
-                isSaved: false
-            }));
+            this.setState(
+                () => ({
+                    isDirty: true,
+                    data: cleanData(data.formData, newSchema.properties),
+                    schemaWithConditionals: newSchema,
+                    hasError: data.errors.length > 0,
+                    isSaved: false
+                }),
+                () => {
+                    if (this.props.onChange) {
+                        this.props.onChange(this.state.data);
+                    }
+                }
+            );
         }
 
         simulateSubmit = () => {
