@@ -88,8 +88,7 @@ export const ApplicationForm = configure<ApolloFormMutationNames>({
 `ApolloForm` is based on the amazing Mozilla library [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form).
 Most of the questions regarding JSON Schema, validations or rendering are in [react-jsonschema-form documentation](https://github.com/mozilla-services/react-jsonschema-form)
 
-To get started more easily, please read [Understanding "react-jsonschema-form" in 2 minutes
-](https://github.com/wittydeveloper/react-apollo-form/wiki/Understanding-react-jsonschema-form-form-in-2-minutes)
+To get started more easily, please read [Getting started: build a GraphQL Form in 5 minutes](https://github.com/wittydeveloper/react-apollo-form/wiki/Getting-started:-build-a-GraphQL-Form-in-5-minutes)
 
 The following subjects are specific to `ApolloForm`:
 
@@ -111,7 +110,8 @@ then just configure a "component form" for each endpoint*
 
 - **Where can I find some documentation about `widgets`, `fields` or theming in general?**
 
-*Please take a look at the [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form) documentation that will answers 90% of the rendering questions.*
+*Please take a look at the [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form) documentation that will answers 90% of the rendering questions.
+If not, please take a look at [Theming](https://github.com/wittydeveloper/react-apollo-form/wiki/Theming)*
 
 -------------------------
 
