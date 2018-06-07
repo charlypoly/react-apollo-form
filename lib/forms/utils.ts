@@ -58,6 +58,7 @@ export const isMutationConfig = (config: ApolloFormConfig): config is ApolloForm
 
 // Given a schema, expand properties that reference a definition
 export const flattenSchemaProperties = (schema: any): any => {
+    // FIXME: do not work for >1 depth properties !
     return transform(
         schema.properties,
         (result, value, key) => {
