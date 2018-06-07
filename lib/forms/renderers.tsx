@@ -69,7 +69,6 @@ export interface FormRendererProps {
     // tslint:disable-next-line:no-any
     save: (data: any) => void;
     // tslint:disable-next-line:no-any
-    transformErrors: any;
     config: ApolloFormConfig;
     schema: JSONSchema6;
     data: object;
@@ -77,6 +76,8 @@ export interface FormRendererProps {
     ui?: UiSchema & ApolloFormUi;
     subTitle?: string;
     liveValidate?: boolean;
+    // tslint:disable-next-line:no-any
+    transformErrors?: any;
 }
 
 export interface FormContext {
@@ -117,7 +118,9 @@ export class FormRenderer extends React.Component<FormRendererProps> {
                 // tslint:disable-next-line:no-any
                 {...{ ErrorList: props.ui ? props.ui.errorListComponent : undefined } as any}
                 transformErrors={
-                    props.transformErrors(formContext.formPrefix)
+                    props.transformErrors ?
+                        props.transformErrors(formContext.formPrefix) :
+                        undefined
                 }
             >
                 {this.props.children}

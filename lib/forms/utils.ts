@@ -196,13 +196,6 @@ export type ReactJsonschemaFormError = {
     property: string;
     stack: string;
 };
-export const transformErrors = (prefix: string) => (errors: ReactJsonschemaFormError[]) => {
-    return errors.map(error => ({
-        ...error,
-        message: `FormError.${prefix}${error.property}.${error.name}`
-        // message: t(`FormError.${prefix}${error.property}.${error.name}`)
-    }));
-};
 
 // Given formData and form properties, remove all formData properties not present in form properties
 export const cleanData = (formData: object, properties: object, parentPath: string | null = null): object => {

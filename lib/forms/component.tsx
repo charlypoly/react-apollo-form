@@ -27,7 +27,6 @@ import {
     cleanData,
     getSchemaFromConfig,
     isMutationConfig,
-    transformErrors,
     ApolloFormConfig,
     ReactJsonschemaFormError
 } from './utils';
@@ -59,6 +58,7 @@ export type ApolloFormProps<T> = {
     ui?: UiSchema & ApolloFormUi;
     children?: React.SFC<ApolloRenderProps>;
     liveValidate?: boolean;
+    transformErrors?: (formName: string) => (errors: ReactJsonschemaFormError[]) => ReactJsonschemaFormError[];
 };
 
 export interface ApolloFormState {
@@ -323,7 +323,11 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                     theme={theme}
                     onChange={this.onChange}
                     save={this.save}
-                    transformErrors={transformErrors}
+                    transformErrors={
+                        this.props.transformErrors ?
+                            this.props.transformErrors :
+                            undefined
+                    }
                     config={this.props.config}
                     ui={this.props.ui}
                     liveValidate={this.props.liveValidate}

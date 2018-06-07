@@ -1,17 +1,16 @@
 // tslint:disable-next-line:no-unused-variable
 import { storiesOf } from '@storybook/react';
-import { schema, types } from 'functional-json-schema';
-import { graphqlSync, introspectionQuery, DocumentNode, IntrospectionQuery } from 'graphql';
+import { graphqlSync, introspectionQuery, IntrospectionQuery } from 'graphql';
 import { fromIntrospectionQuery } from 'graphql-2-json-schema';
 import gql from 'graphql-tag';
 import { JSONSchema6 } from 'json-schema';
 import { keys } from 'lodash';
 import * as React from 'react';
-import { ApolloConsumer, Mutation } from 'react-apollo';
+import { ApolloConsumer } from 'react-apollo';
 import { FieldProps } from 'react-jsonschema-form';
 import { schema as mockSchema } from '../graphql-mock';
 import { configure, ApolloFormConfigureTheme, ErrorListComponent } from '../lib/forms/component';
-import { ApolloFormBuilder } from '../lib/forms/definitions';
+import { ReactJsonschemaFormError } from '../lib/forms/utils';
 const { Button, Input, Checkbox, Header, Form, Message } = require('semantic-ui-react');
 const { withKnobs, select, boolean: bool } = require('@storybook/addon-knobs/react');
 
@@ -34,10 +33,17 @@ const ErrorList: ErrorListComponent = p => (
     />
 );
 
+const transformErrors = (prefix: string) => (errors: ReactJsonschemaFormError[]) => {
+    return errors.map(error => ({
+        ...error,
+        message: `FormError.${prefix}${error.property}.${error.name}`
+    }));
+};
+
 const theme: ApolloFormConfigureTheme = {
     templates: {
         FieldTemplate: props => {
-            const { classNames, help, description, errors, children, rawErrors, label } = props;
+            const { description, children, label } = props;
             return (
                 <Form.Field>
                     <label>{label}{props.required && '*'}</label>
@@ -125,6 +131,7 @@ storiesOf('ApolloForm', module)
                                     }
                                 }
                             }}
+                            transformErrors={transformErrors}
                         >
                             {
                                 form => (
@@ -196,6 +203,7 @@ storiesOf('ApolloForm', module)
                                     }
                                 }
                             }}
+                            transformErrors={transformErrors}
                         >
                             {
                                 form => (
