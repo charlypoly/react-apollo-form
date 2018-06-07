@@ -53,7 +53,7 @@ export type ApolloFormConfig = ApolloFormConfigManual | ApolloFormConfigMutation
 
 // type guard
 export const isMutationConfig = (config: ApolloFormConfig): config is ApolloFormConfigMutation => {
-    return !!get(config, 'mutation') && get(config, 'mutation.name');
+    return !!get(config, 'mutation') && !!get(config, 'mutation.name');
 };
 
 // Given a schema, expand properties that reference a definition
