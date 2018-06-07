@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
 
+// Given a schema.json (GraphQL Introspection Query dump)
+//  return all exposed mutations names
 export const extractMutationsNames = (filePath: string): string[] | void => {
     const content = fs.readFileSync(filePath);
     if (content) {
@@ -16,6 +18,7 @@ export const extractMutationsNames = (filePath: string): string[] | void => {
     }
 };
 
+// `mutations.d.ts` file template
 export const generateMutationTypesDef = (mutations: string[]): string => {
     return (
         `

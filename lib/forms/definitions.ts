@@ -1,8 +1,7 @@
 // tslint:disable:no-console
 // tslint:disable:no-any
-import * as definitions from '../JSON-schema.json';
-import { reduce, omit, pick } from 'lodash';
 import { JSONSchema6 } from 'json-schema';
+import { omit, pick, reduce } from 'lodash';
 
 type FromMutationOptions = {
     exclude?: string[];
@@ -19,6 +18,7 @@ type PropertiesConfiguration = {
 
 export namespace ApolloFormBuilder {
 
+    // little helper.
     export const filterProperties = (
         properties: { [k: string]: { title: string } },
         paths: string[],
@@ -63,6 +63,9 @@ export namespace ApolloFormBuilder {
         return {};
     };
 
+    // compose a final schema given different parts
+    //  the developer provide a `properties` (or mutation) to <ApolloForm>
+    //      `jsonSchema` is global to the builded component via configure()
     export const getSchema = (jsonSchema: JSONSchema6, properties: object, required: string[] = []) => {
         return {
             type: 'object',

@@ -1,27 +1,14 @@
+// tslint:disable:no-any
 import { ApolloClient } from 'apollo-client';
-import { IntrospectionQuery } from 'graphql';
 import { JSONSchema6 } from 'json-schema';
-import { isString } from 'lodash';
 import * as React from 'react';
 import {
-    ArrayFieldTemplateProps,
-    FieldTemplateProps,
     IChangeEvent,
-    ObjectFieldTemplateProps,
     UiSchema,
     WidgetProps
 } from 'react-jsonschema-form';
-import { buttonsRenderer } from './renderers';
-import { cancelButtonRenderer } from './renderers';
+import { getTheme, ApolloFormTheme, ErrorListComponent } from './renderers';
 import { FormRenderer } from './renderers';
-import {
-    titleRenderer,
-    ButtonsRendererProps,
-    CancelButtonRendererProps,
-    SaveButtonRendererProps,
-    TitleRendererProps
-} from './renderers';
-import { saveButtonRenderer } from './renderers';
 import {
     applyConditionsToSchema,
     cleanData,
@@ -31,23 +18,8 @@ import {
     ReactJsonschemaFormError
 } from './utils';
 
-export type ErrorListComponent = React.SFC<{
-    errors: ReactJsonschemaFormError[];
-    errorSchema: object;
-    schema: object;
-    uiSchema: UiSchema;
-    formContext: object;
-}>;
-
-// Augment SchemaUi for ApolloForm ui prop
-export type ApolloFormUi = {
-    showErrorsList?: boolean;
-    showErrorsInline?: boolean;
-    errorListComponent?: ErrorListComponent;
-};
-
+// see https://github.com/wittydeveloper/react-apollo-form/wiki/Getting-started:-build-a-GraphQL-Form-in-5-minutes
 export type ApolloFormProps<T> = {
-    // tslint:disable-next-line:no-any
     data: any;
     title?: string;
     subTitle?: string;
@@ -65,12 +37,14 @@ export interface ApolloFormState {
     isDirty: boolean;
     isSaved: boolean;
     hasError: boolean;
+    // we store the original schema
     schema: JSONSchema6;
+    // and we store the transformed schema (with applied UI conditionals)
     schemaWithConditionals: JSONSchema6;
-    // tslint:disable-next-line:no-any
     data: any;
 }
 
+// see https://github.com/wittydeveloper/react-apollo-form/wiki/Form-Rendering-customisation-with-renderers
 export interface ApolloRenderProps {
     // renderers
     header: () => React.ReactNode;
@@ -80,32 +54,12 @@ export interface ApolloRenderProps {
     cancelButton: () => React.ReactNode;
     // actions
     cancel: () => void;
-    // tslint:disable-next-line:no-any
     save: (args: any) => void;
     // state
     isDirty: boolean;
     isSaved: boolean;
     hasError: boolean;
-    // tslint:disable-next-line:no-any
     data: any;
-}
-
-export interface ApolloFormTheme {
-    templates: {
-        FieldTemplate?: React.StatelessComponent<FieldTemplateProps>;
-        ArrayFieldTemplate?: React.StatelessComponent<ArrayFieldTemplateProps>;
-        ObjectFieldTemplate?: React.StatelessComponent<ObjectFieldTemplateProps>;
-    };
-    // tslint:disable-next-line:no-any
-    widgets: { [k: string]: any };
-    // tslint:disable-next-line:no-any
-    fields: { [k: string]: any };
-    renderers: {
-        header: React.SFC<TitleRendererProps>;
-        buttons: React.SFC<ButtonsRendererProps>;
-        saveButton: React.SFC<SaveButtonRendererProps>;
-        cancelButton: React.SFC<CancelButtonRendererProps>;
-    };
 }
 
 export interface ApolloFormConfigureTheme {
@@ -116,26 +70,18 @@ export interface ApolloFormConfigureTheme {
 }
 
 export interface ApolloFormConfigureOptions {
-    // tslint:disable-next-line:no-any
     client: ApolloClient<any>;
     theme?: ApolloFormConfigureTheme;
     jsonSchema: JSONSchema6;
     i18n?: (key: string) => string;
 }
 
-export const getTheme = (theme?: ApolloFormConfigureTheme): ApolloFormTheme => ({
-    templates: theme && theme.templates ? theme.templates : {},
-    fields: theme && theme.fields ? theme.fields : {},
-    widgets: theme && theme.widgets ? theme.widgets : {},
-    renderers: {
-        buttons: theme && theme.renderers && theme.renderers.buttons ? theme.renderers.buttons : buttonsRenderer,
-        cancelButton: theme && theme.renderers && theme.renderers.cancelButton ?
-            theme.renderers.cancelButton : cancelButtonRenderer,
-        saveButton: theme && theme.renderers && theme.renderers.saveButton ?
-            theme.renderers.saveButton : saveButtonRenderer,
-        header: theme && theme.renderers && theme.renderers.header ? theme.renderers.header : titleRenderer,
-    }
-});
+// Augment SchemaUi for ApolloForm ui prop
+export type ApolloFormUi = {
+    showErrorsList?: boolean;
+    showErrorsInline?: boolean;
+    errorListComponent?: ErrorListComponent;
+};
 
 export type ApolloFormComponent<T> = React.ComponentClass<ApolloFormProps<T>> & {
     registerWidget: (name: string, comp: React.SFC<WidgetProps>) => void;
@@ -215,7 +161,6 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
         }
 
         // build save handler for <Form> component
-        // tslint:disable-next-line:no-any
         save = ({ formData }: any) => { // TODO: remove args
             const { config, onSave } = this.props;
             if (isMutationConfig(config)) {

@@ -36,7 +36,6 @@ export type ApolloFormConfigBase = {
     // update directly schema (merge, not override)
     augment?: object;
 };
-
 export interface ApolloFormConfigMutation extends ApolloFormConfigBase {
     mutation: {
         name: string;
@@ -46,12 +45,10 @@ export interface ApolloFormConfigMutation extends ApolloFormConfigBase {
         refetchQueries?: string[] | PureQueryOptions[] | RefetchQueriesProviderFn;
     };
 }
-
 export interface ApolloFormConfigManual extends ApolloFormConfigBase {
     schema: JSONSchema6;
     saveData: (formData: any) => any;
 }
-
 export type ApolloFormConfig = ApolloFormConfigManual | ApolloFormConfigMutation;
 
 // type guard
@@ -75,6 +72,8 @@ export const flattenSchemaProperties = (schema: any): any => {
     );
 };
 
+// Given a UiSchema, a JSON Schema and data
+//  remove all schema not matching UiSchema "ui:if" predicates
 const applyConditionsReducer =
     (ui: UiSchema & ApolloFormUi, data: object) =>
         (acc: JSONSchema6, curr: JSONSchema6, key: string) => {
