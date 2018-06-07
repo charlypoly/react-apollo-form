@@ -1,5 +1,10 @@
+import { schema, types } from 'functional-json-schema';
 import { JSONSchema6 } from 'json-schema';
+import { merge } from 'lodash';
+import { UiSchema } from 'react-jsonschema-form';
+import { ApolloFormUi } from '../../lib/forms/component';
 import {
+    applyConditionsToSchema,
     flattenSchemaProperties,
     isMutationConfig,
     ApolloFormConfigManual,
@@ -49,6 +54,42 @@ describe('forms/utils', () => {
                     }, required: ['id', 'name']
                 }
             });
+        });
+    });
+
+    describe('applyConditionsToSchema()', () => {
+        test('should update schema following "ui:if"', () => {
+
+            const jsonSchema: JSONSchema6 = schema({
+                form: {
+                    referAFriend: types.type('boolean'),
+                    friendName: types.type('string')
+                }
+            });
+            const uiSchema: UiSchema & ApolloFormUi = {
+                form: {
+                    friendName: {
+                        'ui:if': {
+                            'form.referAFriend': true
+                        }
+                    }
+                }
+            };
+            const data = {
+                form: {
+                    referAFriend: false
+                }
+            };
+
+            expect(applyConditionsToSchema(jsonSchema, uiSchema, data).properties).toEqual(merge(
+                schema({
+                    form: {
+                        referAFriend: types.type('boolean'),
+                    }
+                }).properties,
+                { form: { properties: { friendName: {} } } }
+            ));
+
         });
     });
 
