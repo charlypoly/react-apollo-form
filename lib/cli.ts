@@ -5,7 +5,7 @@ import { fstat } from 'fs';
 import { fromIntrospectionQuery } from 'graphql-2-json-schema';
 import * as path from 'path';
 import * as yargs from 'yargs';
-import { extractMutationsNames, generateMutationTypesDef } from './utils';
+import { extractMutationsNamesFromFile, generateMutationTypesDef } from './utils';
 
 // tslint:disable:no-console
 
@@ -70,7 +70,7 @@ yargs
                 // ------
                 console.log('[2/3] generate mutations enum type ...');
 
-                const mutationNames = extractMutationsNames(path.resolve(outputPath, 'schema.json'));
+                const mutationNames = extractMutationsNamesFromFile(path.resolve(outputPath, 'schema.json'));
                 if (mutationNames) {
                     fs.writeFileSync(
                         path.resolve(outputPath, 'mutations.d.ts'),
