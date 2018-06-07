@@ -5,6 +5,7 @@ import { UiSchema } from 'react-jsonschema-form';
 import { ApolloFormUi } from '../../lib/forms/component';
 import {
     applyConditionsToSchema,
+    cleanData,
     flattenSchemaProperties,
     isMutationConfig,
     ApolloFormConfigManual,
@@ -90,6 +91,31 @@ describe('forms/utils', () => {
                 { form: { properties: { friendName: {} } } }
             ));
 
+        });
+    });
+
+    describe('cleanData()', () => {
+        test('should remove extraneous properties', () => {
+            const jsonSchema: JSONSchema6 = schema({
+                form: {
+                    referAFriend: types.type('boolean'),
+                    friendName: types.type('string')
+                }
+            });
+            const data = {
+                form: {
+                    a: 1,
+                    referAFriend: false,
+                    b: {
+                        c: 1
+                    }
+                }
+            };
+            expect(cleanData(data, jsonSchema.properties)).toEqual({
+                form: {
+                    referAFriend: false,
+                }
+            });
         });
     });
 
