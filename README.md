@@ -98,6 +98,8 @@ The following subjects are specific to `ApolloForm`:
 - [Add a form specific Widget (outside a theme)](https://github.com/wittydeveloper/react-apollo-form/wiki/Add-a-form-specific-Widget-(outside-a-theme))
 - [Conditional fields](https://github.com/wittydeveloper/react-apollo-form/wiki/Conditional-fields)
 - [Form rendering customisation](https://github.com/wittydeveloper/react-apollo-form/wiki/Form-Rendering-customisation-with-renderers)
+- [Add RegExp constraint to a field](https://github.com/wittydeveloper/react-apollo-form/wiki/Add-regex-constraints-to-a-field)
+- [Error messages customization](https://github.com/wittydeveloper/react-apollo-form/wiki/Error-messages-customisation)
 
 -------------------------
 
