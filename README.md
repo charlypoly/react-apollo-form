@@ -1,4 +1,4 @@
-# <ApolloForm> ![https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg](https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg) ![https://img.shields.io/npm/v/react-apollo-form.svg](https://img.shields.io/npm/v/react-apollo-form.svg) ![https://img.shields.io/npm/dt/react-apollo-form.svg](https://img.shields.io/npm/dt/react-apollo-form.svg)
+# &lt;ApolloForm&gt; ![https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg](https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg) ![https://img.shields.io/npm/v/react-apollo-form.svg](https://img.shields.io/npm/v/react-apollo-form.svg) ![https://img.shields.io/npm/dt/react-apollo-form.svg](https://img.shields.io/npm/dt/react-apollo-form.svg)
 
 *Build React forms based on GraphQL APIs.*
 
