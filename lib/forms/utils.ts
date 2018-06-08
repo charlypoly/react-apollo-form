@@ -53,11 +53,12 @@ export type ApolloFormConfig = ApolloFormConfigManual | ApolloFormConfigMutation
 
 // type guard
 export const isMutationConfig = (config: ApolloFormConfig): config is ApolloFormConfigMutation => {
-    return !!get(config, 'mutation') && get(config, 'mutation.name');
+    return !!get(config, 'mutation') && !!get(config, 'mutation.name');
 };
 
 // Given a schema, expand properties that reference a definition
 export const flattenSchemaProperties = (schema: any): any => {
+    // FIXME: do not work for >1 depth properties !
     return transform(
         schema.properties,
         (result, value, key) => {
