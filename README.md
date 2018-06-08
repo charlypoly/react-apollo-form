@@ -1,6 +1,6 @@
-# react-apollo-form [![npm version](https://badge.fury.io/js/react-apollo-form.svg)](https://badge.fury.io/js/react-apollo-form)
+# <ApolloForm> ![https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg](https://img.shields.io/circleci/project/github/wittydeveloper/react-apollo-form.svg) ![https://img.shields.io/npm/v/react-apollo-form.svg](https://img.shields.io/npm/v/react-apollo-form.svg) ![https://img.shields.io/npm/dt/react-apollo-form.svg](https://img.shields.io/npm/dt/react-apollo-form.svg)
 
-**React form generation from GraphQL API (Apollo only)**
+*Build React forms based on GraphQL APIs.*
 
 ![https://s3.eu-west-2.amazonaws.com/github-oss/react-apollo-form/read-me-demo-preview.png](https://s3.eu-west-2.amazonaws.com/github-oss/react-apollo-form/read-me-demo-preview.png)
 
