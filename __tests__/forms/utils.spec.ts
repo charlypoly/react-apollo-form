@@ -7,6 +7,7 @@ import {
     applyConditionsToSchema,
     cleanData,
     flattenSchemaProperties,
+    getSchemaFromConfig,
     isMutationConfig,
     ApolloFormConfigManual,
     ApolloFormConfigMutation
@@ -117,6 +118,57 @@ describe('forms/utils', () => {
                 }
             });
         });
+    });
+
+    describe('getSchemaFromConfig()', () => {
+
+        describe('for ApolloFormConfigManual', () => {
+
+            const jsonSchema: JSONSchema6 = schema({
+                form: {
+                    referAFriend: types.type('boolean'),
+                    friendName: types.type('string')
+                }
+            });
+            const config: ApolloFormConfigManual = {
+                schema: jsonSchema,
+                saveData: () => ({})
+            };
+
+            expect(
+                getSchemaFromConfig({}, config)
+            ).toEqual({
+                type: 'object',
+                definitions: {},
+                properties: jsonSchema.properties,
+                required: []
+            });
+        });
+
+        describe('for ApolloFormConfigMutation', () => {
+            const todoSchema: JSONSchema6 = require('../mocks/todo-json-schema.json');
+            const config: ApolloFormConfigMutation = {
+                mutation: {
+                    name: 'create_todo',
+                    document: null
+                }
+            };
+
+            expect(
+                getSchemaFromConfig(todoSchema, config)
+            ).toEqual({
+                type: 'object',
+                definitions: todoSchema.definitions,
+                properties: schema({
+                    todo: {
+                        name: types.type('string', { required: true }),
+                        completed: types.type('boolean')
+                    }
+                }).properties,
+                required: []
+            });
+        });
+
     });
 
 });
