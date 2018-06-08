@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.5"></a>
+## [0.1.5](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.4...v0.1.5) (2018-06-08)
+
+
+### Bug Fixes
+
+* **forms/utils:** flattenSchemaProperties() broken for >1 depth form jsonSchema ([3fcff2e](https://github.com/wittydeveloper/react-apollo-form/commit/3fcff2e))
+* **readme:** typo ([e8c8b5f](https://github.com/wittydeveloper/react-apollo-form/commit/e8c8b5f))
+
+
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.3...v0.1.4) (2018-06-07)
 
