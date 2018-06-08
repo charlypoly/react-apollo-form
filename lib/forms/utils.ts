@@ -1,6 +1,6 @@
 // tslint:disable:no-any
 import { PureQueryOptions } from 'apollo-client';
-import { every } from 'async';
+import { every, reduce } from 'async';
 import { DocumentNode } from 'graphql';
 import { JSONSchema6 } from 'json-schema';
 import {
@@ -57,20 +57,24 @@ export const isMutationConfig = (config: ApolloFormConfig): config is ApolloForm
 };
 
 // Given a schema, expand properties that reference a definition
-export const flattenSchemaProperties = (schema: any): any => {
-    // FIXME: do not work for >1 depth properties !
-    return transform(
-        schema.properties,
-        (result, value, key) => {
-            if (get(value, '$ref')) {
-                result[key] = retrieveSchema(value, schema.definitions);
-            } else {
-                result[key] = value;
-            }
-            return result;
-        },
-        {}
-    );
+export const flattenSchemaProperties = (entrySchema: any): any => {
+    const reducer = (schema: any, definitions: any) => {
+        return transform(
+            schema.properties,
+            (result, value, key) => {
+                if (get(value, '$ref')) {
+                    result[key] = retrieveSchema(value, definitions);
+                } else {
+                    result[key] = has(value, 'properties') ?
+                        { ...value, properties: reducer(value, definitions) }
+                        : value;
+                }
+                return result;
+            },
+            {}
+        );
+    };
+    return reducer(entrySchema, entrySchema.definitions || {});
 };
 
 // Given a UiSchema, a JSON Schema and data
