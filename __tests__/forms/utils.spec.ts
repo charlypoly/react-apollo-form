@@ -57,6 +57,39 @@ describe('forms/utils', () => {
                 }
             });
         });
+
+        test('should expand definitions for 2 levels properties', () => {
+            const todoSchema: JSONSchema6 = require('../mocks/todo-json-schema.json');
+            const mySchema: JSONSchema6 = {
+                '$schema': 'http://json-schema.org/draft-06/schema#',
+                properties: {
+                    a: {
+                        type: 'object',
+                        properties: {
+                            b: { '$ref': '#/definitions/Todo' }
+                        }
+                    }
+                },
+                definitions: todoSchema.definitions
+            };
+            expect(
+                flattenSchemaProperties(mySchema)
+            ).toEqual({
+                a: {
+                    type: 'object',
+                    properties: {
+                        b: {
+                            type: 'object',
+                            properties: {
+                                completed: { type: 'boolean' },
+                                id: { type: 'string' },
+                                name: { type: 'string' }
+                            }, required: ['id', 'name']
+                        }
+                    }
+                }
+            });
+        });
     });
 
     describe('applyConditionsToSchema()', () => {
