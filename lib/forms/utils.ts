@@ -63,7 +63,7 @@ export const flattenSchemaProperties = (entrySchema: any): any => {
             schema.properties,
             (result, value, key) => {
                 if (get(value, '$ref')) {
-                    result[key] = retrieveSchema(value, definitions);
+                    result[key] = cloneDeep(retrieveSchema(value, definitions));
                 } else {
                     result[key] = has(value, 'properties') ?
                         { ...value, properties: reducer(value, definitions) }
@@ -156,6 +156,13 @@ export const getSchemaFromConfig = (jsonSchema: JSONSchema6, config: ApolloFormC
     if (config.ignoreFields) {
         config.ignoreFields.map(f => {
             unset(flattenSchema.properties, f.replace(/\./g, '.properties.'));
+            const pathParts = f.split('.');
+            const prop = pathParts.pop(); // remove prop
+            const parentPath = pathParts.join('.properties.');
+            const parentRequired = get(flattenSchema.properties, `${parentPath}.required`);
+            if (parentRequired.includes(prop)) {
+                set(flattenSchema.properties, `${parentPath}.required`, filter(parentRequired, v => v !== prop));
+            }
         });
     }
 
