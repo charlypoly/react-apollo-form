@@ -202,6 +202,54 @@ describe('forms/utils', () => {
             });
         });
 
+        describe('for ApolloFormConfigMutation / ignoring optional field', () => {
+            const todoSchema: JSONSchema6 = require('../mocks/todo-json-schema.json');
+            const config: ApolloFormConfigMutation = {
+                mutation: {
+                    name: 'create_todo',
+                    document: null
+                },
+                ignoreFields: ['todo.completed']
+            };
+
+            expect(
+                getSchemaFromConfig(todoSchema, config)
+            ).toEqual({
+                type: 'object',
+                definitions: todoSchema.definitions,
+                properties: schema({
+                    todo: {
+                        name: types.type('string', { required: true })
+                    }
+                }).properties,
+                required: []
+            });
+        });
+
+        describe('for ApolloFormConfigMutation / ignoring optional field', () => {
+            const todoSchema: JSONSchema6 = require('../mocks/todo-json-schema.json');
+            const config: ApolloFormConfigMutation = {
+                mutation: {
+                    name: 'create_todo',
+                    document: null
+                },
+                ignoreFields: ['todo.name']
+            };
+
+            expect(
+                getSchemaFromConfig(todoSchema, config)
+            ).toEqual({
+                type: 'object',
+                definitions: todoSchema.definitions,
+                properties: schema({
+                    todo: {
+                        completed: types.type('boolean')
+                    }
+                }).properties,
+                required: []
+            });
+        });
+
     });
 
 });
