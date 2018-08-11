@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.6"></a>
+## [0.1.6](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.5...v0.1.6) (2018-08-11)
+
+
+### Bug Fixes
+
+* **getSchemaFromConfig:** ignoreFields now works for required fields ([74bf63a](https://github.com/wittydeveloper/react-apollo-form/commit/74bf63a))
+
+
+
 <a name="0.1.5"></a>
 ## [0.1.5](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.4...v0.1.5) (2018-06-08)
 
