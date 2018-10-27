@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "apollo-client": "^2.3.1",
-    "apollo-codegen": "^0.19.1",
+    "apollo-codegen": "^0.20.0",
     "graphql-2-json-schema": "0.1.0-1",
     "json-schema": "^0.2.3",
     "lodash": "^4.17.10",
@@ -29,7 +29,7 @@
     "@storybook/addon-console": "^1.0.0",
     "@storybook/addon-knobs": "^3.4.6",
     "@storybook/react": "4.0.0-alpha.8",
-    "@types/apollo-codegen": "^0.16.0",
+    "@types/apollo-codegen": "0.20.1",
     "@types/graphql": "^0.13.1",
     "@types/jest": "^23.0.0",
     "@types/json-schema": "^6.0.1",
