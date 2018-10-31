@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.7"></a>
+## [0.1.7](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.7-alpha.1...v0.1.7) (2018-10-31)
+
+
+
 <a name="0.1.7-alpha.1"></a>
 ## [0.1.7-alpha.1](https://github.com/wittydeveloper/react-apollo-form/compare/v0.1.7-alpha.0...v0.1.7-alpha.1) (2018-10-27)
 
