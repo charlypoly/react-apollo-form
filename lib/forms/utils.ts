@@ -88,7 +88,7 @@ const applyConditionsReducer =
                 if (
                     filter(propUi['ui:if'], (predicate, k) => {
                         const value = get(data, k);
-                        return predicate && predicate !== value;
+                        return predicate !== value;
                     }).length === 0
                 ) {
                     Object.assign(acc, curr);
