@@ -117,7 +117,7 @@ export function configure<MutationNamesType = {}>(opts: ApolloFormConfigureOptio
                 schemaWithConditionals: applyConditionsToSchema(
                     schema,
                     this.props.ui,
-                    this.state.data
+                    this.props.data
                 )
             }));
         }
