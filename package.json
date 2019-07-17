@@ -28,7 +28,7 @@
     "@storybook/addon-actions": "^3.4.6",
     "@storybook/addon-console": "^1.0.0",
     "@storybook/addon-knobs": "^3.4.6",
-    "@storybook/react": "4.0.0-alpha.8",
+    "@storybook/react": "5.1.9",
     "@types/apollo-codegen": "^0.16.0",
     "@types/graphql": "^0.13.1",
     "@types/jest": "^23.0.0",
