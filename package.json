@@ -22,7 +22,7 @@
     "react-apollo": "^2.1.4",
     "react-dom": "^16.4.0",
     "react-jsonschema-form": "^1.0.3",
-    "yargs": "^11.0.0"
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.4.6",
