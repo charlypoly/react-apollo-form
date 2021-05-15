@@ -31,7 +31,7 @@
     "@storybook/react": "4.0.0-alpha.8",
     "@types/apollo-codegen": "^0.16.0",
     "@types/graphql": "^0.13.1",
-    "@types/jest": "^23.0.0",
+    "@types/jest": "26.0.23",
     "@types/json-schema": "^6.0.1",
     "@types/lodash": "^4.14.109",
     "@types/node": "^10.1.4",
