@@ -18,9 +18,9 @@
     "graphql-2-json-schema": "0.1.0-1",
     "json-schema": "^0.2.3",
     "lodash": "^4.17.10",
-    "react": "^16.4.0",
+    "react": "^18.0.0",
     "react-apollo": "^2.1.4",
-    "react-dom": "^16.4.0",
+    "react-dom": "^18.0.0",
     "react-jsonschema-form": "^1.0.3",
     "yargs": "^11.0.0"
   },
