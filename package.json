@@ -39,7 +39,7 @@
     "@types/storybook__react": "^3.0.7",
     "@types/yargs": "^11.0.0",
     "apollo-cache-inmemory": "^1.2.2",
-    "apollo-storybook-react": "^0.1.3",
+    "apollo-storybook-react": "^0.2.0",
     "awesome-typescript-loader": "^5.0.0",
     "babel-core": "^6.26.3",
     "css-loader": "^0.28.11",

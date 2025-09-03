@@ -765,15 +765,17 @@ apollo-link@^1.0.0, apollo-link@^1.2.2:
     apollo-utilities "^1.0.0"
     zen-observable-ts "^0.8.9"
 
-apollo-storybook-core@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/apollo-storybook-core/-/apollo-storybook-core-0.3.3.tgz#57f8802ead9b6df0e3c4376e4f1496ce66872d67"
+apollo-storybook-core@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/apollo-storybook-core/-/apollo-storybook-core-0.5.4.tgz#8357861cfb127ac9a9d0afc4d87fdf5ff97f39b2"
+  integrity sha512-5h+Yr4Pt2foGJi078gmjlQZ4mj8NBNravjjyhFOrfXTDQd2ODgWn2cwoSGJcpp+iZdkGwwlFkZbyJ1nBTsxukg==
 
-apollo-storybook-react@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/apollo-storybook-react/-/apollo-storybook-react-0.1.3.tgz#0ef7729efbb4153de8146ccb9c7e14f68944ca49"
+apollo-storybook-react@^0.2.0:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/apollo-storybook-react/-/apollo-storybook-react-0.2.4.tgz#6cf31e1a8e3ad4d3f3e80480b0966deab6661c17"
+  integrity sha512-nop1YHsCXbk/xoqnUDmSvHhxwo4IMCYpQyzgTpSVA8Gey9sbRELdI1GyfJYOl7yP+wpP0Eth7tKQRiUWjXPmdQ==
   dependencies:
-    apollo-storybook-core "^0.3.3"
+    apollo-storybook-core "^0.5.4"
 
 apollo-utilities@^1.0.0, apollo-utilities@^1.0.12:
   version "1.0.12"
