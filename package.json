@@ -15,7 +15,7 @@
   "dependencies": {
     "apollo-client": "^2.3.1",
     "apollo-codegen": "^0.19.1",
-    "graphql-2-json-schema": "0.1.0-1",
+    "graphql-2-json-schema": "0.10.0",
     "json-schema": "^0.2.3",
     "lodash": "^4.17.10",
     "react": "^16.4.0",
